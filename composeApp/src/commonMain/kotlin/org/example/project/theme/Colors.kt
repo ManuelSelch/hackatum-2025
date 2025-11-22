@@ -1,9 +1,16 @@
+package org.example.project.theme
+
+import org.example.project.theme.AppColors.LocalCustomBrushes
 import androidx.compose.material3.*
 
 import androidx.compose.ui.graphics.Color
 import kotlin.math.*
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 
 // Conversion from OKLCH to sRGB Color
 fun hsl(h: Float, s: Float, l: Float): Color {
@@ -46,7 +53,7 @@ object AppColors {
 
 
 
-    object AppColorsDark {
+object AppColorsDark {
         val bgDark = hsl(231f, 0.98f, 0.03f)
         val bg = hsl(222f, 0.80f, 0.06f)
         val bgLight = hsl(218f, 0.56f, 0.10f)
@@ -65,15 +72,15 @@ object AppColors {
 
 
     val LightColors = lightColorScheme(
-    background = AppColors.bg,
-    surface = AppColors.bgLight,
-    primary = AppColors.primary,
-    secondary = AppColors.secondary,
-    error = AppColors.danger,
-    onBackground = AppColors.text,
-    onPrimary = AppColors.bgLight,
-    onSecondary = AppColors.bgLight,
-    onError = AppColors.bgLight
+    background = bg,
+    surface = bgLight,
+    primary = primary,
+    secondary = secondary,
+    error = danger,
+    onBackground = text,
+    onPrimary = bgDark,
+    onSecondary = bgLight,
+    onError = bgLight
 )
 
 val DarkColors = darkColorScheme(
@@ -83,24 +90,58 @@ val DarkColors = darkColorScheme(
     secondary = AppColorsDark.secondary,
     error = AppColorsDark.danger,
     onBackground = AppColorsDark.text,
-    onPrimary = AppColorsDark.bgLight,
+    onPrimary = AppColorsDark.bgDark,
     onSecondary = AppColorsDark.bgLight,
     onError = AppColorsDark.bgLight
 )
 
+data class CustomBrushes(
+    val primaryBackground: Brush,
+)
 
 
-@Composable
+
+
+val LocalCustomBrushes = staticCompositionLocalOf<CustomBrushes> {
+    error("No brushes provided")
+}
+
+
+    @Composable
 fun AppTheme(
+
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colors = if (darkTheme) DarkColors else LightColors
+    val brushes = CustomBrushes(
+        primaryBackground = Brush.linearGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.background,
+                MaterialTheme.colorScheme.onPrimary,
+                MaterialTheme.colorScheme.primary.copy(alpha = .25f)
+            ),
+            start = Offset.Zero,
+            end = Offset.Infinite // fills the whole container
+        )
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
     )
+
+    CompositionLocalProvider(LocalCustomBrushes provides brushes){
+
+        MaterialTheme(
+            colorScheme = colors,
+            content = content
+        )
+    }
+
 }
+
 }
+object AppTheme {
+    val brushes: AppColors.CustomBrushes
+        @Composable get() = LocalCustomBrushes.current
+
+}
+
 
