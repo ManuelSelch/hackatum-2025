@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 kotlin {
@@ -14,13 +15,16 @@ kotlin {
     
     iosArm64()
     iosSimulatorArm64()
-    
     jvm()
-    
+
+    val ktorVersion = "3.3.2"
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
+            implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
         }
 
         iosMain.dependencies {
@@ -47,4 +51,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+dependencies {
+    implementation("io.ktor:ktor-client-cio-jvm:3.3.1")
 }

@@ -41,6 +41,8 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
         if(state.isLoading)
             CircularProgressIndicator()
 
+        state.error?.let { Text(it) }
+
         when(state.route) {
             LoginRoute.Login -> LoginView(
                 username, { username = it },

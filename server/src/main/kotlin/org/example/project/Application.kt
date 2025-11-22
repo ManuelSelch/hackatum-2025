@@ -6,8 +6,6 @@ import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.openapi.*
-import io.ktor.server.plugins.swagger.*
 import org.example.project.auth.JwtConfig
 import org.example.project.auth.JwtService
 import org.example.project.auth.installJwt
@@ -15,9 +13,9 @@ import org.example.project.db.DatabaseManager
 import org.example.project.db.GroupDao
 import org.example.project.db.UserDao
 import org.example.project.routes.authRoutes
-import org.example.project.routes.groupRoutes
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.example.project.routes.groupRoutes
 
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
@@ -25,8 +23,7 @@ fun main() {
 }
 
 fun Application.module() {
-    val dbPath = "data/app.db"
-    val db = DatabaseManager.create(dbPath)
+    val db = DatabaseManager.create("data/app.db")
     val users = UserDao(db)
     val groups = GroupDao(db)
 
@@ -51,19 +48,11 @@ fun Application.module() {
     val jwt = JwtService(jwtCfg)
 
     routing {
-        // Swagger UI hosting and OpenAPI doc exposure
-        // Use generated OpenAPI endpoint as source for Swagger UI in tests & prod
-        //openAPI(path = "/openapi")
-        //swaggerUI(path = "/swagger", apiUrl = "/", api = "openapi.json")
-
         get("/") {
             call.respondText("Ktor: ${Greeting().greet()}")
         }
 
-        // Auth endpoints: /auth/register and /auth/login
         authRoutes(users, jwt)
-
-        // Group endpoints (JWT-protected): /groups, /groups/{id}, membership management
-        groupRoutes(groups, users)
+        groupRoutes(users, groups)
     }
 }

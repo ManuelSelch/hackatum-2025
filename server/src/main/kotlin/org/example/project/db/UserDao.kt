@@ -1,98 +1,64 @@
 package org.example.project.db
-
-import org.ktorm.dsl.*
-import org.ktorm.entity.add
-import org.ktorm.entity.sequenceOf
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
- * Ktorm-based DAO providing CRUD operations for users table.
+ * DAO providing CRUD operations for users using Exposed entities.
  */
 class UserDao(private val dbManager: DatabaseManager) {
 
     private val database get() = dbManager.getDatabase()
 
-    /** Create a new user. Returns the created DbUser with generated id. */
-    fun create(name: String, email: String, password: String): DbUser {
-        val user = DbUser {
-            this.name = name
-            this.email = email
-            this.password = password
+    /** Create a new user. Returns the created User with generated id. */
+    fun create(name: String, email: String, password: String): User {
+        return transaction(database) {
+            UserEntity.new {
+                this.name = name
+                this.email = email
+                this.password = password
+                this.createdAt = System.currentTimeMillis().toString()
+            }.toModel()
         }
-        database.user
-        database.sequenceOf(DbUsers).add(user)
-        return user;
     }
 
     /** Retrieve a user by id, or null if not found. */
-    fun getById(id: Long): DbUser? {
-        return database
-            .from(Users)
-            .select(Users.id, Users.name, Users.email, Users.password, Users.createdAt)
-            .where { Users.id eq id }
-            .limit(1)
-            .map { row ->
-                DbUser(
-                    id = row[Users.id]!!,
-                    name = row[Users.name]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!,
-                    createdAt = row[Users.createdAt]
-                )
-            }
-            .firstOrNull()
+    fun getById(id: Long): User? = transaction(database) {
+        UserEntity.findById(id)?.toModel()
     }
 
     /** Retrieve a user by unique email, or null if not found. */
-    fun getByEmail(email: String): DbUser? {
-        return database
-            .from(Users)
-            .select(Users.id, Users.name, Users.email, Users.password, Users.createdAt)
-            .where { Users.email eq email }
+    fun getByEmail(email: String): User? = transaction(database) {
+        UserEntity.find { UsersTable.email eq email }
             .limit(1)
-            .map { row ->
-                DbUser(
-                    id = row[Users.id]!!,
-                    name = row[Users.name]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!,
-                    createdAt = row[Users.createdAt]
-                )
-            }
             .firstOrNull()
+            ?.toModel()
     }
 
     /** List users with pagination. */
-    fun list(limit: Int = 100, offset: Int = 0): List<DbUser> {
-        return database
-            .from(Users)
-            .select(Users.id, Users.name, Users.email, Users.password, Users.createdAt)
-            .orderBy(Users.id.asc())
+    fun list(limit: Int = 100, offset: Long = 0): List<User> = transaction(database) {
+        UserEntity.all()
+            .orderBy(UsersTable.id to SortOrder.ASC)
             .limit(limit, offset)
-            .map { row ->
-                DbUser(
-                    id = row[Users.id]!!,
-                    name = row[Users.name]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!,
-                    createdAt = row[Users.createdAt]
-                )
-            }
+            .map { it.toModel() }
     }
 
-    /** Update a user by id. Returns true if a row was updated. */
-    fun updateById(id: Long, user: User): Boolean {
-        val affected = database.update(Users) {
-            set(Users.name, user.name)
-            set(Users.email, user.email)
-            set(Users.password, user.password)
-            where { Users.id eq id }
-        }
-        return affected > 0
+    /** Update a user by id. Returns the updated user or null if not found. */
+    fun updateById(id: Long, name: String, email: String, password: String): User? = transaction(database) {
+        UserEntity.findById(id)?.apply {
+            this.name = name
+            this.email = email
+            this.password = password
+        }?.toModel()
     }
 
     /** Delete a user by id. Returns true if a row was deleted. */
-    fun deleteById(id: Long): Boolean {
-        val affected = database.delete(Users) { it.id eq id }
-        return affected > 0
+    fun deleteById(id: Long): Boolean = transaction(database) {
+        val entity = UserEntity.findById(id)
+        if (entity != null) {
+            entity.delete()
+            true
+        } else {
+            false
+        }
     }
 }

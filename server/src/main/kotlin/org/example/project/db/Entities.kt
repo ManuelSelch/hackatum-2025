@@ -1,43 +1,45 @@
 package org.example.project.db
 
-import org.ktorm.entity.Entity
+import models.GroupResponse
+import models.UserResponse
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 
 /**
- * Representation of a user row as stored in the database.
- * Includes the generated primary key id and createdAt timestamp.
+ * Exposed DAO entities for database operations.
  */
-interface DbUser : Entity<DbUser> {
-    companion object : Entity.Factory<DbUser>()
+class UserEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<UserEntity>(UsersTable)
 
-    val id: Long
-    var name: String
-    var email: String
-    var password: String
-    var createdAt: String?
+    var name by UsersTable.name
+    var email by UsersTable.email
+    var password by UsersTable.password
+    var createdAt by UsersTable.createdAt
+    var groups by GroupEntity via GroupMembersTable
+
+    // Convert to business logic model
+    fun toModel() = User(
+        id = id.value,
+        name = name,
+        email = email,
+        password = password,
+        createdAt = createdAt
+    )
 }
 
-/**
- * Representation of a group row as stored in the database.
- * Includes the generated primary key id and createdAt timestamp.
- * The members are stored separately in the GroupMember junction table.
- */
-interface DbGroup : Entity<DbGroup> {
-    companion object : Entity.Factory<DbGroup>()
+class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<GroupEntity>(GroupsTable)
 
-    val id: Long
-    var name: String
-    var createdAt: String?
-}
+    var name by GroupsTable.name
+    var members by UserEntity via GroupMembersTable
+    var createdAt by GroupsTable.createdAt
 
-/**
- * Representation of a group member row in the junction table.
- * Composite primary key (group_id, user_id) is enforced in DB schema.
- */
-
-interface DbGroupMember : Entity<DbGroupMember> {
-    companion object : Entity.Factory<DbGroupMember>()
-
-    var groupId: Long
-    var userId: Long
-    var createdAt: String?
+    // Convert to business logic model
+    fun toModel() = Group(
+        id = id.value,
+        name = name,
+        members = members.toList().map { it.toModel() },
+        createdAt = createdAt
+    )
 }

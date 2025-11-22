@@ -1,35 +1,24 @@
 package org.example.project.db
 
-import org.ktorm.schema.Table
-import org.ktorm.schema.long
-import org.ktorm.schema.varchar
+import org.jetbrains.exposed.dao.id.LongIdTable
 
 /**
- * Ktorm table mapping for the users table.
+ * Exposed table mappings using IdTable for DAO pattern.
  */
-object DbUsers : Table<DbUser>("users") {
-    val id = long("id").primaryKey().bindTo { it.id }
-    val name = varchar("name").bindTo { it.name }
-    val email = varchar("email").bindTo { it.email }
-    val password = varchar("password").bindTo { it.password }
-    val createdAt = varchar("created_at").bindTo { it.createdAt }
+object UsersTable : LongIdTable("users") {
+    val name = varchar("name", length = 255)
+    val email = varchar("email", length = 255).uniqueIndex()
+    val password = varchar("password", length = 255)
+    val createdAt = varchar("created_at", length = 255).nullable()
 }
 
-/**
- * Ktorm table mapping for the groups table.
- */
-object Groups : Table<DbGroup>(tableName = "groups") {
-    val id = long("id").primaryKey().bindTo { it.id }
-    val name = varchar("name").bindTo { it.name }
-    val createdAt = varchar("created_at").bindTo { it.createdAt }
+object GroupsTable : LongIdTable("groups") {
+    val name = varchar("name", length = 255).uniqueIndex()
+    val createdAt = varchar("created_at", length = 255).nullable()
 }
 
-/**
- * Ktorm table mapping for the junction table group_members.
- * Composite primary key (group_id, user_id) is enforced in DB schema.
- */
-object GroupMembers : Table<DbGroupMember>(tableName = "group_members") {
-    val groupId = long("group_id").bindTo { it.groupId }
-    val userId = long("user_id").bindTo { it.userId }
-    val createdAt = varchar("created_at").bindTo { it.createdAt }
+object GroupMembersTable : LongIdTable("group_members") {
+    val groupId = reference("group_id", GroupsTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
+    val userId = reference("user_id", UsersTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
+    val createdAt = varchar("created_at", length = 255).nullable()
 }

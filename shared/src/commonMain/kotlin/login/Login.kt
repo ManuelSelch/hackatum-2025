@@ -45,22 +45,19 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
 
     fun handleAuth(state: LoginState, username: String, password: String, isRegister: Boolean): LoginState {
         scope.launch {
-            delay(200)
-
-            val result: Result<LoginResponse> = if (username == "admin") {
-                // backdoor while api is not ready yet .-)
-                Result.success(LoginResponse(username, password))
-            } else {
-                if (isRegister) api.register(username, password) else api.login(username, password)
-            }
+            val result = if (isRegister) api.register(username, password) else api.login(username, password)
 
             result
                 .onSuccess {
                     dispatch(LoginAction.AuthSuccess)
                     emit(LoginEffect.NavigateToHome)
                 }
-                .onFailure {
-                    dispatch(LoginAction.AuthFailed("auth failed"))
+                .onFailure { error ->
+                    val message: String = when (error) {
+                        is ApiException -> error.error?.error ?: "API error"
+                        else -> error.message ?: "Unknown error"
+                    }
+                    dispatch(LoginAction.AuthFailed(message))
                 }
         }
 
