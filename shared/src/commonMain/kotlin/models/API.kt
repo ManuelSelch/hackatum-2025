@@ -13,7 +13,6 @@ data class UserResponse(
     val id: Long,
     val name: String,
     val email: String,
-    val createdAt: String? = null
 )
 
 @Serializable
@@ -21,7 +20,7 @@ data class GroupResponse(
     val id: Long,
     val name: String,
     val members: List<UserResponse>,
-    val createdAt: String? = null
+    val expenses: List<ExpenseResponse>,
 )
 
 // AUTH
@@ -82,4 +81,14 @@ data class GroupListRequest(
 @Serializable
 data class GroupListResponse(
     val groups: List<GroupResponse>
+)
+
+@Serializable
+data class ExpenseResponse(
+    val id: Long,
+    val groupId: Long,
+    val payer: UserResponse,
+    val amount: Double,
+    val description: String,
+    val borrowers: List<UserResponse>
 )
