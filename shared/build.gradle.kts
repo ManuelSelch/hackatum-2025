@@ -9,14 +9,14 @@ plugins {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
     
     iosArm64()
     iosSimulatorArm64()
     jvm()
-    jvmToolchain(17)
+    jvmToolchain(21)
 
     val ktorVersion = "3.3.2"
 
