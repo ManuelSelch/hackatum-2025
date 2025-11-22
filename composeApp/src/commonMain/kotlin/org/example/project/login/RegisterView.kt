@@ -20,6 +20,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun RegisterView(
     username: String, usernameChanged: (String) -> Unit,
+    email: String, emailChanged: (String) -> Unit,
     password: String, passwordChanged: (String) -> Unit,
     loginTapped: () -> Unit, registerTapped: () -> Unit,
 ) {
@@ -35,6 +36,14 @@ fun RegisterView(
             value = username,
             onValueChange = usernameChanged,
             label = { Text("Username")},
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        TextField(
+            value = email,
+            onValueChange = emailChanged,
+            label = { Text("Email")},
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -72,6 +81,7 @@ fun RegisterView(
 @Preview
 fun RegisterPreview() {
     RegisterView(
+        "", {},
         "", {},
         "", {},
         {}, {}

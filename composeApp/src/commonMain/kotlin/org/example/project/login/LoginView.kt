@@ -17,7 +17,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LoginView(
-    username: String, usernameChanged: (String) -> Unit,
+    email: String, emailChanged: (String) -> Unit,
     password: String, passwordChanged: (String) -> Unit,
     loginTapped: () -> Unit,
     registerTapped: () -> Unit,
@@ -31,8 +31,8 @@ fun LoginView(
         Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
 
         TextField(
-            value = username, onValueChange = usernameChanged,
-            label = { Text("Username") },
+            value = email, onValueChange = emailChanged,
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
 

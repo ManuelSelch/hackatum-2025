@@ -29,6 +29,7 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
     val state by store.state.collectAsState()
 
     var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     Column(
@@ -45,25 +46,26 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
 
         when(state.route) {
             LoginRoute.Login -> LoginView(
-                username, { username = it },
+                email, { email = it },
                 password, { password = it },
                 {
-                    store.dispatch(LoginAction.Login(username, password))
+                    store.dispatch(LoginAction.Login(email, password))
                 },
                 {
-                    username = ""; password = ""
+                    username = ""; email = ""; password = ""
                     store.dispatch(LoginAction.SwitchToRegister)
                 },
             )
             LoginRoute.Register -> RegisterView(
                 username, { username = it },
+                email, { email = it },
                 password, { password = it },
                 {
-                    username = ""; password = ""
+                    username = ""; email = ""; password = ""
                     store.dispatch(LoginAction.SwitchToLogin)
                 },
                 {
-                    store.dispatch(LoginAction.Register(username, password))
+                    store.dispatch(LoginAction.Register(username, email, password))
                 }
             )
         }

@@ -13,8 +13,8 @@ data class LoginState(
 enum class LoginRoute { Login, Register, }
 
 sealed class LoginAction {
-    data class Login(val username: String, val password: String): LoginAction()
-    data class Register(val username: String, val password: String) : LoginAction()
+    data class Login(val email: String, val password: String): LoginAction()
+    data class Register(val username: String, val email: String, val password: String) : LoginAction()
 
     data object SwitchToRegister : LoginAction()
     data object SwitchToLogin : LoginAction()
@@ -32,8 +32,8 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
 
     override fun reduce(state: LoginState, action: LoginAction): LoginState {
         return  when(action) {
-            is LoginAction.Login -> handleAuth(state, action.username, action.password, false)
-            is LoginAction.Register -> handleAuth(state, action.username, action.password, true)
+            is LoginAction.Login -> login(state, action.email, action.password)
+            is LoginAction.Register -> register(state, action.username, action.email, action.password)
 
             is LoginAction.SwitchToLogin -> state.copy(route = LoginRoute.Login)
             is LoginAction.SwitchToRegister -> state.copy(route = LoginRoute.Register)
@@ -43,11 +43,22 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         }
     }
 
-    fun handleAuth(state: LoginState, username: String, password: String, isRegister: Boolean): LoginState {
+    fun login(state: LoginState, email: String, password: String): LoginState {
         scope.launch {
-            val result = if (isRegister) api.register(username, password) else api.login(username, password)
+            api.login(email, password)
+                .onSuccess {
+                    dispatch(LoginAction.AuthSuccess)
+                    emit(LoginEffect.NavigateToHome)
+                }
+                .onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
+        }
 
-            result
+        return state.copy(isLoading = true)
+    }
+
+    fun register(state: LoginState, username: String, email: String, password: String): LoginState {
+        scope.launch {
+            api.register(username, email,password)
                 .onSuccess {
                     dispatch(LoginAction.AuthSuccess)
                     emit(LoginEffect.NavigateToHome)

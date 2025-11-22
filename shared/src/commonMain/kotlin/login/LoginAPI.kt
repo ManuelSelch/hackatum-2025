@@ -7,8 +7,8 @@ import models.RegisterRequest
 import models.UserResponse
 
 class LoginAPI: API() {
-    suspend fun login(username: String, password: String): Result<LoginResponse> {
-        val res: Result<LoginResponse> = post("/auth/login", LoginRequest(username, password))
+    suspend fun login(email: String, password: String): Result<LoginResponse> {
+        val res: Result<LoginResponse> = post("/auth/login", LoginRequest(email, password))
 
         // update JWT token+
         token = res.getOrNull()?.token ?: ""
@@ -16,7 +16,7 @@ class LoginAPI: API() {
         return res;
     }
 
-    suspend fun register(username: String, password: String): Result<UserResponse> {
-        return post("/auth/register", RegisterRequest(username, username, password))
+    suspend fun register(username: String, email: String, password: String): Result<UserResponse> {
+        return post("/auth/register", RegisterRequest(username, email, password))
     }
 }

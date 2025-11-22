@@ -10,6 +10,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 const val USERNAME = "MyUser"
+const val EMAIL = "MyEmail"
 const val PASSWORD = "MyPass"
 const val ERROR = "MyError"
 
@@ -25,7 +26,7 @@ class LoginTest {
 
     @Test
     fun register_startsLoading() {
-        store.dispatch(LoginAction.Register(USERNAME, PASSWORD))
+        store.dispatch(LoginAction.Register(USERNAME, EMAIL, PASSWORD))
         assertTrue { state.isLoading }
     }
 
@@ -50,7 +51,7 @@ class LoginTest {
     }
     @Test
     fun authFailed_stopsLoading() {
-        store.dispatch(LoginAction.Login(USERNAME, PASSWORD))
+        store.dispatch(LoginAction.Login(EMAIL, PASSWORD))
         assertTrue { state.isLoading }
 
         store.dispatch(LoginAction.AuthFailed(ERROR))
