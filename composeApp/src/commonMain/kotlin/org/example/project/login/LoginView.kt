@@ -32,12 +32,14 @@ fun LoginView(
 
         TextField(
             value = email, onValueChange = emailChanged,
+            singleLine = true,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
 
         TextField(
             value = password, onValueChange = passwordChanged,
+            singleLine = true,
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
         )
