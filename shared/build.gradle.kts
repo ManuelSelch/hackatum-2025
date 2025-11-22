@@ -17,12 +17,14 @@ kotlin {
     iosSimulatorArm64()
     jvm()
 
-    
+    val ktorVersion = "3.3.2"
+
     sourceSets {
         commonMain.dependencies {
             implementation(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
-            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+            implementation("io.ktor:ktor-client-content-negotiation:${ktorVersion}")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
         }
 
         iosMain.dependencies {
@@ -49,4 +51,7 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+dependencies {
+    implementation("io.ktor:ktor-client-cio-jvm:3.3.1")
 }

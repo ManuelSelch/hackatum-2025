@@ -45,9 +45,6 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
 
     fun handleAuth(state: LoginState, username: String, password: String, isRegister: Boolean): LoginState {
         scope.launch {
-            print("handle auth")
-            delay(2000)
-
             val result = if (isRegister) api.register(username, password) else api.login(username, password)
 
             result
