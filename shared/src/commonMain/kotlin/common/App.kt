@@ -30,13 +30,10 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
     val login = LoginStore()
 
     init {
-        println("init app store")
         scope.launch {
             login.effects.collect { effect ->
-                println(effect.toString())
                 when (effect) {
-                    is LoginEffect.LoginSuccess -> dispatch(AppAction.Navigate(AppRoute.Home))
-                    is LoginEffect.LoginFailed -> { }
+                    is LoginEffect.NavigateToHome -> dispatch(AppAction.Navigate(AppRoute.Home))
                 }
             }
         }
