@@ -1,20 +1,15 @@
-package org.example.project.theme.components
+package org.example.project.home.components
 
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.Image
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import org.example.project.theme.AppColors.AppTheme
+import org.example.project.theme.icons.Add
+import org.example.project.theme.icons.Arrow_drop_down
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,14 +37,12 @@ fun HouseDropdown(
                     focusedContainerColor = MaterialTheme.colorScheme.background,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                    focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-
                 ),
                 trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                    Image(Arrow_drop_down, contentDescription = null, modifier = Modifier.rotate(if (expanded) 180f else 0f))
                 },
-                modifier = Modifier.menuAnchor()
+
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
             )
 
             ExposedDropdownMenu(
@@ -69,9 +62,24 @@ fun HouseDropdown(
 
                     )
                 }
+                DropdownMenuItem(
+                    text = { Text("Create new Team")},
+                    leadingIcon = { Icon(Add, contentDescription = null) },
+                    onClick = {
+                        expanded = false
+                        // Create new Team
+
+                    }
+                )
             }
         }
     }
 
 }
 
+@Composable
+@Preview
+
+fun HouseDropdownPreview(){
+    HouseDropdown(listOf("hello", "hello1", "hello2"), onSelected = {})
+}
