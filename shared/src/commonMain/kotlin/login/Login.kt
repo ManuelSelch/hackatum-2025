@@ -2,51 +2,68 @@ package login
 
 import common.Store
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlin.contracts.Effect
 
 data class LoginState(
-    var username: String = "Hallo Welt",
     val isLoading: Boolean = false,
-    var route: LoginRoute = LoginRoute.Demo
+    var route: LoginRoute = LoginRoute.Login,
+    var error: String? = null,
 )
 
-
-enum class LoginRoute {
-    Demo
-}
+enum class LoginRoute { Login, Register, }
 
 sealed class LoginAction {
-    data class Submit(val name: String): LoginAction()
-    data object LoginDone : LoginAction()
+    data class Login(val username: String, val password: String): LoginAction()
+    data class Register(val username: String, val password: String) : LoginAction()
+
+    data object SwitchToRegister : LoginAction()
+    data object SwitchToLogin : LoginAction()
+
+    data object AuthSuccess : LoginAction()
+    data class AuthFailed(val error: String): LoginAction()
 }
 
 sealed class LoginEffect {
-    data object LoginSuccess: LoginEffect()
-    data class LoginFailed(val msg: String): LoginEffect()
+    data object NavigateToHome: LoginEffect()
 }
 
 class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
+    private val api = LoginAPI()
+
     override fun reduce(state: LoginState, action: LoginAction): LoginState {
         return  when(action) {
-            is LoginAction.Submit -> {
-                scope.launch { validateLogin(state.username) }
-                state.copy(isLoading = true)
-            }
+            is LoginAction.Login -> handleAuth(state, action.username, action.password, false)
+            is LoginAction.Register -> handleAuth(state, action.username, action.password, true)
 
-            is LoginAction.LoginDone -> state.copy(isLoading = false)
+            is LoginAction.SwitchToLogin -> state.copy(route = LoginRoute.Login)
+            is LoginAction.SwitchToRegister -> state.copy(route = LoginRoute.Register)
+
+            is LoginAction.AuthSuccess -> state.copy(isLoading = false, error = null)
+            is LoginAction.AuthFailed -> state.copy(isLoading = false, error = action.error)
         }
     }
 
-    suspend fun validateLogin(username: String) {
-        delay(3000)
+    fun handleAuth(state: LoginState, username: String, password: String, isRegister: Boolean): LoginState {
+        scope.launch {
+            delay(200)
 
-        if(username == "admin")
-            emit(LoginEffect.LoginSuccess)
-        else
-            emit(LoginEffect.LoginFailed("you are stupid"))
+            val result: Result<LoginResponse> = if (username == "admin") {
+                // backdoor while api is not ready yet .-)
+                Result.success(LoginResponse(username, password))
+            } else {
+                if (isRegister) api.register(username, password) else api.login(username, password)
+            }
 
-        dispatch(LoginAction.LoginDone)
+            result
+                .onSuccess {
+                    dispatch(LoginAction.AuthSuccess)
+                    emit(LoginEffect.NavigateToHome)
+                }
+                .onFailure {
+                    dispatch(LoginAction.AuthFailed("auth failed"))
+                }
+        }
+
+        return state.copy(isLoading = true)
     }
 }
