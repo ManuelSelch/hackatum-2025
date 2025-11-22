@@ -1,0 +1,457 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Hackatum 2025 API",
+    "version": "1.0.0",
+    "description": "Authentication API with JWT support"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Health check",
+        "description": "Simple endpoint to verify the server is running",
+        "responses": {
+          "200": {
+            "description": "Server is running",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Ktor: Hello, World!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "Create a new user account with name, email, and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - email already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "description": "Authenticate user and receive JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "description": "Retrieve the authenticated user's information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/groups": {
+      "post": {
+        "summary": "Create a group",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateGroupRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Group created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GroupResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON body or missing name",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "409": {
+            "description": "Group name already exists",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "get": {
+        "summary": "List groups",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 500 }, "required": false, "description": "Max items to return (default 100)" },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "minimum": 0 }, "required": false, "description": "Items to skip (default 0)" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of groups",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/GroupResponse" } }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/groups/{id}": {
+      "get": {
+        "summary": "Get group with members",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" }
+        ],
+        "responses": {
+          "200": { "description": "Group found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupWithMembersResponse" } } } },
+          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "delete": {
+        "summary": "Delete group",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" }
+        ],
+        "responses": {
+          "204": { "description": "Deleted successfully" },
+          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/groups/{id}/members": {
+      "get": {
+        "summary": "List group members",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 500 }, "required": false, "description": "Max items to return (default 100)" },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "minimum": 0 }, "required": false, "description": "Items to skip (default 0)" }
+        ],
+        "responses": {
+          "200": { "description": "List of members", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/MemberResponse" } } } } },
+          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "post": {
+        "summary": "Add member to group",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" } ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AddMemberRequest" } } }
+        },
+        "responses": {
+          "201": { "description": "Membership created" },
+          "200": { "description": "Already a member (idempotent)" },
+          "400": { "description": "Invalid JSON body or group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Group or user not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/groups/{id}/members/{userId}": {
+      "delete": {
+        "summary": "Remove member from group",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" },
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "User ID" }
+        ],
+        "responses": {
+          "204": { "description": "Membership removed" },
+          "400": { "description": "Invalid group id or user id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "404": { "description": "Membership not found or group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateGroupRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "description": "Group name (unique)", "example": "Team Alpha" }
+        }
+      },
+      "GroupResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "example": 1 },
+          "name": { "type": "string", "example": "Team Alpha" },
+          "createdAt": { "type": "string", "format": "date-time", "nullable": true, "example": "2025-01-15T10:30:00Z" }
+        }
+      },
+      "MemberResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "example": 42 },
+          "name": { "type": "string", "example": "Alice" },
+          "email": { "type": "string", "format": "email", "example": "alice@example.com" },
+          "createdAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "GroupWithMembersResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "members": { "type": "array", "items": { "$ref": "#/components/schemas/MemberResponse" } },
+          "createdAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "AddMemberRequest": {
+        "type": "object",
+        "required": ["userId"],
+        "properties": {
+          "userId": { "type": "integer", "format": "int64", "example": 42 }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password",
+            "example": "securePassword123"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password",
+            "example": "securePassword123"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User's unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "john.doe@example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Timestamp when the user was created",
+            "example": "2025-01-15T10:30:00Z"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Login successful"
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT authentication token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong",
+            "example": "Invalid email or password"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token obtained from /auth/login endpoint"
+      }
+    }
+  }
+}
