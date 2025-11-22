@@ -1,0 +1,51 @@
+### POST Register
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name": "Yorick",
+  "email": "yorick@gmail.com",
+  "password": "yorick123"
+}
+
+### POST Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "yorick@gmail.com",
+  "password": "yorick123"
+}
+
+> {%
+    client.global.set("authToken", response.body.token);
+%}
+
+### POST creat second user
+GET http://localhost:8080/auth/me
+Authorization: Bearer {{ authToken }}
+
+### SECOND USER
+
+### POST Register
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name": "Manuel",
+  "email": "manuel@gmail.com",
+  "password": "manuel123"
+}
+
+### POST Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "manuel@gmail.com",
+  "password": "manuel123"
+}
+
+> {%
+    client.global.set("authToken2", response.body.token);
+%}

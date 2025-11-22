@@ -1,7 +1,7 @@
 package org.example.project.db
 
-import models.Group
-import models.User
+import models.GroupResponse
+import models.UserResponse
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -16,6 +16,7 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
     var email by UsersTable.email
     var password by UsersTable.password
     var createdAt by UsersTable.createdAt
+    var groups by GroupEntity via GroupMembersTable
 
     // Convert to business logic model
     fun toModel() = User(
@@ -35,12 +36,10 @@ class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
     var createdAt by GroupsTable.createdAt
 
     // Convert to business logic model
-    fun toModel(): Group {
-        return Group(
-            id = id.value,
-            name = name,
-            members = members.toList().map { it.toModel() },
-            createdAt = createdAt
-        )
-    }
+    fun toModel() = Group(
+        id = id.value,
+        name = name,
+        members = members.toList().map { it.toModel() },
+        createdAt = createdAt
+    )
 }

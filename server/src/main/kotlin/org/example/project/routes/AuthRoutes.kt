@@ -1,7 +1,6 @@
 package org.example.project.routes
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
@@ -12,15 +11,14 @@ import models.ErrorResponse
 import models.LoginRequest
 import models.LoginResponse
 import models.RegisterRequest
-import models.User
 import models.UserResponse
 import org.example.project.auth.JwtService
 import org.example.project.db.UserDao
+import org.example.project.db.toResponse
 
 /**
  * Authentication-related routes: register and login.
  */
-
 
 fun Route.authRoutes(userDao: UserDao, jwt: JwtService) {
     route("/auth") {
@@ -55,12 +53,7 @@ fun Route.authRoutes(userDao: UserDao, jwt: JwtService) {
 
             call.respond(
                 HttpStatusCode.Created,
-                UserResponse(
-                    id = created.id,
-                    name = created.name,
-                    email = created.email,
-                    createdAt = created.createdAt
-                )
+                created.toResponse()
             )
         }
 
@@ -94,11 +87,7 @@ fun Route.authRoutes(userDao: UserDao, jwt: JwtService) {
                 LoginResponse(
                     message = "Login successful",
                     token = token,
-                    user = UserResponse(
-                        id = user.id,
-                        name = user.name,
-                        email = user.email
-                    )
+                    user = user.toResponse()
                 )
             )
         }
