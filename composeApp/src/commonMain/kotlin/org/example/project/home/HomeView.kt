@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import models.GroupResponse
 import org.example.project.home.components.*
 import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.TEXT_REG
@@ -19,10 +20,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeView(
-    households: List<String>,
+    groups: List<GroupResponse>,
+    current: GroupResponse?,
+    groupSelected: (GroupResponse) -> Unit,
     createHouseholdTapped: () -> Unit,
     joinTapped: () -> Unit,
     inviteTapped: () -> Unit,
+    refreshTapped: () -> Unit,
 ) {
     Column(
         Modifier.fillMaxSize()
@@ -30,9 +34,10 @@ fun HomeView(
     {
         // household Selector
         HouseDropdown(
-            items = households,
+            items = groups,
             label = "Select a House",
-            {},
+            current,
+            groupSelected,
             createHouseholdTapped
         )
 
@@ -44,6 +49,10 @@ fun HomeView(
 
             Button(onClick = inviteTapped) {
                 Text("Invite")
+            }
+
+            Button(onClick = refreshTapped) {
+                Text("Refresh")
             }
         }
         Column(Modifier.fillMaxWidth().wrapContentHeight()) {
@@ -126,8 +135,11 @@ fun HomeView(
 @Preview
 fun HomePreview() {
     HomeView(
-        listOf("a", "b", "c"),
+        emptyList(),
+        null,
         {},
-        {}, {}
+        {},
+        {}, {},
+        {}
     )
 }

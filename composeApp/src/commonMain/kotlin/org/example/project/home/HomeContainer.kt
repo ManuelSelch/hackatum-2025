@@ -41,13 +41,15 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
 
                 state.error?.let { Text(it) }
 
-
                 when (state.route) {
                     HomeRoute.Dashboard -> HomeView(
-                        households = state.households,
+                        state.groups,
+                        state.current,
+                        { store.dispatch(HomeAction.GroupSelected(it)) },
                         { store.dispatch(HomeAction.CreateHouseHoldTapped) },
                         { store.dispatch(HomeAction.JoinTapped) },
-                        { store.dispatch((HomeAction.InviteTapped)) }
+                        { store.dispatch((HomeAction.InviteTapped)) },
+                        { store.dispatch(HomeAction.RefreshTapped) },
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(
@@ -60,7 +62,7 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
                     )
 
                     HomeRoute.Invite -> InviteView(
-                        state.groupId,
+                        state.current?.id,
                         backTapped = { store.dispatch(HomeAction.BackTapped) }
                     )
                 }
