@@ -65,7 +65,6 @@ data class GroupCreateRequest(
 @Serializable
 data class GroupJoinRequest(
     val groupID: Long,
-    val userID: Long
 )
 
 // response - no data

@@ -74,18 +74,24 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
             }
 
             post("/join") {
-                val request = call.receive<GroupJoinRequest>()
+                val principal = call.principal<JWTPrincipal>()
+                val userID = principal?.getClaim("uid", Long::class) ?: 0L
 
-                val groupID = request.groupID
-                val userID = request.userID
-
-                val success = groupDao.addUser(groupID, userID)
-                if (!success) {
-                    call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid groupID or userID"))
+                if (userID == 0L) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ErrorResponse("Invalid JWT")
+                    )
                     return@post
                 }
 
-                call.respond(HttpStatusCode.OK)
+                val request = call.receive<GroupJoinRequest>()
+                val groupID = request.groupID
+
+                val result = groupDao.addUser(groupID, userID)
+                result
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, ErrorResponse(it.message?: "Unknown error")) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
             }
         }
     }
