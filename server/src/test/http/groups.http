@@ -1,28 +1,22 @@
 ### POST Create Group
-POST http://localhost:8080/group/create
+POST http://localhost:8080/groups/create
 Content-Type: application/json
 Authorization: Bearer {{ authToken }}
 
 {
-  "name": "Test Group",
-  "creatorID": 1
+  "name": "Test Group"
 }
 
 ### POST Join Group
-POST http://localhost:8080/group/join
+POST http://localhost:8080/groups/join
 Content-Type: application/json
 Authorization: Bearer {{ authToken2 }}
 
 {
-  "groupID": 1,
-  "userID": 2
+  "groupID": 1
 }
 
 ### GET Groups
-GET http://localhost:8080/groups/list
+GET http://localhost:8080/groups
 Content-Type: application/json
 Authorization: Bearer {{ authToken }}
-
-{
-  "userID": 1
-}

@@ -21,6 +21,28 @@ data class GroupResponse(
     val name: String,
     val members: List<UserResponse>,
     val expenses: List<ExpenseResponse>,
+    //val pantryItems: List<PantryItemResponse>
+)
+
+@Serializable
+data class ExpenseResponse(
+    val id: Long,
+    val groupId: Long,
+    val payer: UserResponse,
+    val amount: Double,
+    val description: String,
+    val borrowers: List<UserResponse>
+)
+
+@Serializable
+data class PantryItemResponse(
+    val id: Long,
+    val groupId: Long,
+    val name: String,
+    val quantity: Int,
+    val category: String,
+    val unit: String,
+    val minimumQuantity: Int,
 )
 
 // AUTH
@@ -73,14 +95,4 @@ data class GroupJoinRequest(
 @Serializable
 data class GroupListResponse(
     val groups: List<GroupResponse>
-)
-
-@Serializable
-data class ExpenseResponse(
-    val id: Long,
-    val groupId: Long,
-    val payer: UserResponse,
-    val amount: Double,
-    val description: String,
-    val borrowers: List<UserResponse>
 )

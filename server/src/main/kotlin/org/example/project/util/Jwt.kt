@@ -1,11 +1,10 @@
-package org.example.project.auth
+package org.example.project.util
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
 import io.ktor.server.response.respondText
 import java.time.Instant
 import java.util.Date

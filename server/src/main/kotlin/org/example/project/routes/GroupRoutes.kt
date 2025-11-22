@@ -14,9 +14,10 @@ import models.ErrorResponse
 import models.GroupCreateRequest
 import models.GroupJoinRequest
 import models.GroupListResponse
-import org.example.project.db.GroupDao
-import org.example.project.db.UserDao
-import org.example.project.db.toResponse
+import org.example.project.dao.GroupDao
+import org.example.project.dao.UserDao
+import org.example.project.database.toResponse
+import org.example.project.domain.models.toResponse
 
 fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
     authenticate("auth-jwt") {
@@ -33,7 +34,7 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                     return@get
                 }
 
-                val groups = groupDao.listUserGroups(userID)
+                val groups = groupDao.getGroupsByUserID(userID)
                 call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
             }
 

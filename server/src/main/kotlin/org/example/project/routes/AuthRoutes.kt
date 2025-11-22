@@ -11,9 +11,9 @@ import models.LoginRequest
 import models.LoginResponse
 import models.RegisterRequest
 import models.UserResponse
-import org.example.project.auth.JwtService
-import org.example.project.db.UserDao
-import org.example.project.db.toResponse
+import org.example.project.dao.UserDao
+import org.example.project.util.JwtService
+import org.example.project.domain.models.toResponse
 
 /**
  * Authentication-related routes: register and login.

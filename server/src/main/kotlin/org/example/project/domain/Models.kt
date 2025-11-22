@@ -1,38 +1,12 @@
-package org.example.project.db
+package org.example.project.database
 
 import models.ExpenseResponse
-import models.UserResponse
+import models.PantryItemResponse
+import org.example.project.domain.models.User
+import org.example.project.domain.models.toResponse
 import java.math.BigDecimal
 
-/**
- * Business logic models
- */
-data class User(
-    val id: Long,
-    val name: String,
-    val email: String,
-    val password: String,
-)
 
-fun User.toResponse() = UserResponse(
-    id = id,
-    name = name,
-    email = email,
-)
-
-data class Group(
-    val id: Long,
-    val name: String,
-    val members: List<User>,
-    val expenses: List<Expense>,
-)
-
-fun Group.toResponse() = models.GroupResponse(
-    id = id,
-    name = name,
-    members = members.map { it.toResponse() },
-    expenses = expenses.map { it.toResponse() },
-)
 
 data class Expense(
     val id: Long,
@@ -50,4 +24,24 @@ fun Expense.toResponse() = ExpenseResponse(
     amount = amount.toDouble(),
     description = description,
     borrowers = borrowers.map { it.toResponse() },
+)
+
+data class PantryItem(
+    val id: Long,
+    val groupId: Long,
+    val name: String,
+    val unit: String,
+    val quantity: Int,
+    val minimumQuantity: Int,
+    val category: String
+)
+
+fun PantryItem.toResponse() = PantryItemResponse(
+    id = id,
+    groupId = groupId,
+    name = name,
+    unit = unit,
+    quantity = quantity,
+    minimumQuantity = minimumQuantity,
+    category = category,
 )
