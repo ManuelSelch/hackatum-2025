@@ -59,14 +59,18 @@ open class API {
         }
     }
 
-    suspend inline fun <reified I, reified O> get(endpoint: String, request: I): Result<O> {
+    suspend inline fun <reified O> get(endpoint: String, request: Map<String, String>? = null): Result<O> {
         return try {
-            println("POST $endpoint with token $token")
+            println("GET $endpoint with token $token")
 
             val response = client.get(URL + endpoint) {
                 header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
-                setBody(request)
+                url {
+                    request?.forEach { (key, value) ->
+                        parameters.append(key, value)
+                    }
+                }
             }
 
             // parse error response

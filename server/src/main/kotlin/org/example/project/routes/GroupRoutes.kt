@@ -13,9 +13,7 @@ import io.ktor.server.routing.route
 import models.ErrorResponse
 import models.GroupCreateRequest
 import models.GroupJoinRequest
-import models.GroupListRequest
 import models.GroupListResponse
-import models.GroupResponse
 import org.example.project.db.GroupDao
 import org.example.project.db.UserDao
 import org.example.project.db.toResponse
