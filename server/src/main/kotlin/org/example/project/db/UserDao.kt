@@ -16,7 +16,6 @@ class UserDao(private val dbManager: DatabaseManager) {
                 this.name = name
                 this.email = email
                 this.password = password
-                this.createdAt = System.currentTimeMillis().toString()
             }.toModel()
         }
     }

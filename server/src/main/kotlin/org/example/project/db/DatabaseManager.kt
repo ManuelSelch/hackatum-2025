@@ -26,7 +26,7 @@ class DatabaseManager private constructor(private val dbPath: String) {
     init {
         transaction(db) {
             // Create tables if missing
-            SchemaUtils.createMissingTablesAndColumns(UsersTable, GroupsTable, GroupMembersTable)
+            SchemaUtils.createMissingTablesAndColumns(UsersTable, GroupsTable, GroupMembersTable, ExpensesTable, ExpenseBorrowersTable)
         }
     }
 

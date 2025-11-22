@@ -21,7 +21,7 @@ Content-Type: application/json
     client.global.set("authToken", response.body.token);
 %}
 
-### POST creat second user
+### POST Verify Jwt
 GET http://localhost:8080/auth/me
 Authorization: Bearer {{ authToken }}
 

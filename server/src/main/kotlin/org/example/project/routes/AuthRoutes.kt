@@ -6,7 +6,6 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 import models.ErrorResponse
 import models.LoginRequest
 import models.LoginResponse
