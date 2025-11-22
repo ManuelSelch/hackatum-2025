@@ -19,7 +19,7 @@ Authorization: Bearer {{ authToken2 }}
 }
 
 ### GET Groups
-GET http://localhost:8080/group/list
+GET http://localhost:8080/groups/list
 Content-Type: application/json
 Authorization: Bearer {{ authToken }}
 

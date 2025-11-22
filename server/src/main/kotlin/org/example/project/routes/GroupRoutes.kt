@@ -13,16 +13,30 @@ import io.ktor.server.routing.route
 import models.ErrorResponse
 import models.GroupCreateRequest
 import models.GroupJoinRequest
-import models.GroupListRequest
 import models.GroupListResponse
-import models.GroupResponse
 import org.example.project.db.GroupDao
 import org.example.project.db.UserDao
 import org.example.project.db.toResponse
 
 fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
     authenticate("auth-jwt") {
-        route("/group") {
+        route("/groups") {
+            get("") {
+                val principal = call.principal<JWTPrincipal>()
+                val userID = principal?.getClaim("uid", Long::class) ?: 0L
+
+                if (userID == 0L) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ErrorResponse("Invalid JWT")
+                    )
+                    return@get
+                }
+
+                val groups = groupDao.listUserGroups(userID)
+                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
+            }
+
             post("/create") {
                 val principal = call.principal<JWTPrincipal>()
                 val userID = principal?.getClaim("uid", Long::class) ?: 0L
@@ -60,27 +74,24 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
             }
 
             post("/join") {
-                val request = call.receive<GroupJoinRequest>()
+                val principal = call.principal<JWTPrincipal>()
+                val userID = principal?.getClaim("uid", Long::class) ?: 0L
 
-                val groupID = request.groupID
-                val userID = request.userID
-
-                val success = groupDao.addUser(groupID, userID)
-                if (!success) {
-                    call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid groupID or userID"))
+                if (userID == 0L) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ErrorResponse("Invalid JWT")
+                    )
                     return@post
                 }
 
-                call.respond(HttpStatusCode.OK)
-            }
+                val request = call.receive<GroupJoinRequest>()
+                val groupID = request.groupID
 
-            get("/list") {
-                val request = call.receive<GroupListRequest>()
-
-                val userID = request.userID
-
-                val groups = groupDao.listUserGroups(userID)
-                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
+                val result = groupDao.addUser(groupID, userID)
+                result
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, ErrorResponse(it.message?: "Unknown error")) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
             }
         }
     }

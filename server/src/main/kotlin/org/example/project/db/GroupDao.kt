@@ -26,18 +26,18 @@ class GroupDao(private val dbManager: DatabaseManager) {
      * Add a user to a group. Returns true if inserted, false if it already existed (idempotent).
      * GroupMember is internal and not exposed.
      */
-    fun addUser(groupId: Long, userId: Long): Boolean = transaction(database) {
-        val group = GroupEntity.findById(groupId) ?: return@transaction false
-        val user = UserEntity.findById(userId) ?: return@transaction false
+    fun addUser(groupId: Long, userId: Long): Result<Group> = transaction(database) {
+        runCatching {
+            val group = GroupEntity.findById(groupId) ?: throw IllegalArgumentException("GroupID is invalid. No matching Group found!")
+            val user = UserEntity.findById(userId) ?: throw IllegalArgumentException("UserID is invalid. No matching User found!")
 
-        // Check if user already exists in group
-        if (group.members.any { it.id.value == userId }) {
-            return@transaction false // Already a member
+            // Check if user already exists in group
+            if (group.members.any { it.id.value == userId }) throw IllegalArgumentException("User is already a member of this group")
+
+            // Add user to group
+            group.members = SizedCollection(group.members + user)
+            return@transaction Result.success(group.toModel())
         }
-
-        // Add user to group
-        group.members = SizedCollection(group.members + user)
-        return@transaction true
     }
 
     fun listUserGroups(userID: Long): List<Group> = transaction(database) {

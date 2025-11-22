@@ -65,17 +65,10 @@ data class GroupCreateRequest(
 @Serializable
 data class GroupJoinRequest(
     val groupID: Long,
-    val userID: Long
 )
 
 // response - no data
 
-// - /groups/list
-// request
-@Serializable
-data class GroupListRequest(
-    val userID: Long
-)
 // response
 @Serializable
 data class GroupListResponse(
