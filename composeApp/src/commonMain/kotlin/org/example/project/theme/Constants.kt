@@ -1,5 +1,5 @@
 package org.example.project.theme
-
+const val SERVER_PORT = 8080
 // Font Sizes
 const val TEXT_TITLE = 32
 const val TEXT_XL = 28
