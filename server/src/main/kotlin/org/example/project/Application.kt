@@ -25,8 +25,8 @@ fun main() {
 }
 
 fun Application.module() {
-    val dbPathOverride = System.getProperty("db.path") ?: System.getenv("DB_PATH")
-    val db = if (dbPathOverride != null) DatabaseManager.create(dbPathOverride) else DatabaseManager.create()
+    val dbPath = "data/app.db"
+    val db = DatabaseManager.create(dbPath)
     val users = UserDao(db)
     val groups = GroupDao(db)
 
@@ -53,8 +53,8 @@ fun Application.module() {
     routing {
         // Swagger UI hosting and OpenAPI doc exposure
         // Use generated OpenAPI endpoint as source for Swagger UI in tests & prod
-        openAPI(path = "/openapi")
-        swaggerUI(path = "/swagger", apiUrl = "/", api = "openapi.json")
+        //openAPI(path = "/openapi")
+        //swaggerUI(path = "/swagger", apiUrl = "/", api = "openapi.json")
 
         get("/") {
             call.respondText("Ktor: ${Greeting().greet()}")

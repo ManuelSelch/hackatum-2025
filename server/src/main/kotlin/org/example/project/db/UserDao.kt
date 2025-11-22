@@ -1,6 +1,8 @@
 package org.example.project.db
 
 import org.ktorm.dsl.*
+import org.ktorm.entity.add
+import org.ktorm.entity.sequenceOf
 
 /**
  * Ktorm-based DAO providing CRUD operations for users table.
@@ -11,13 +13,14 @@ class UserDao(private val dbManager: DatabaseManager) {
 
     /** Create a new user. Returns the created DbUser with generated id. */
     fun create(name: String, email: String, password: String): DbUser {
-        val id = database.insertAndGenerateKey(Users) {
-            set(Users.name, name)
-            set(Users.email, email)
-            set(Users.password, password)
-        } as Long
-
-        return getById(id) ?: throw IllegalStateException("Inserted user not found by id=$id")
+        val user = DbUser {
+            this.name = name
+            this.email = email
+            this.password = password
+        }
+        database.user
+        database.sequenceOf(DbUsers).add(user)
+        return user;
     }
 
     /** Retrieve a user by id, or null if not found. */

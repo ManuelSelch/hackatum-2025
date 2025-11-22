@@ -1,6 +1,7 @@
 package org.example.project.db
 
 import org.ktorm.database.Database
+import org.ktorm.entity.sequenceOf
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -70,11 +71,6 @@ class DatabaseManager private constructor(private val dbPath: String) {
                     );
                     """.trimIndent()
                 )
-
-                // Helpful indexes (SQLite will already have PK index; add by-user lookup)
-                stmt.execute(
-                    "CREATE INDEX IF NOT EXISTS idx_group_members_user ON group_members(user_id);"
-                )
             }
         }
     }
@@ -85,7 +81,7 @@ class DatabaseManager private constructor(private val dbPath: String) {
          * are missing, they will be created. The schema is initialized on first use.
          */
         @JvmStatic
-        fun create(dbPath: String = DEFAULT_DB_PATH): DatabaseManager {
+        fun create(dbPath: String): DatabaseManager {
             ensureParentDir(dbPath)
             return DatabaseManager(dbPath)
         }
@@ -97,8 +93,5 @@ class DatabaseManager private constructor(private val dbPath: String) {
                 Files.createDirectories(parent)
             }
         }
-
-        /** Default database file path relative to the working directory. */
-        const val DEFAULT_DB_PATH: String = "data/app.db"
     }
 }
