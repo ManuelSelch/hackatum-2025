@@ -1,7 +1,5 @@
 package org.example.project.db
 
-import models.GroupResponse
-import models.UserResponse
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,7 +13,6 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
     var name by UsersTable.name
     var email by UsersTable.email
     var password by UsersTable.password
-    var createdAt by UsersTable.createdAt
     var groups by GroupEntity via GroupMembersTable
 
     // Convert to business logic model
@@ -23,8 +20,7 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
         id = id.value,
         name = name,
         email = email,
-        password = password,
-        createdAt = createdAt
+        password = password
     )
 }
 
@@ -33,13 +29,33 @@ class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var name by GroupsTable.name
     var members by UserEntity via GroupMembersTable
-    var createdAt by GroupsTable.createdAt
+    val expenses by ExpenseEntity referrersOn ExpensesTable.groupId
 
     // Convert to business logic model
     fun toModel() = Group(
         id = id.value,
         name = name,
         members = members.toList().map { it.toModel() },
-        createdAt = createdAt
+        expenses = expenses.toList().map { it.toModel() }
+    )
+}
+
+class ExpenseEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<ExpenseEntity>(ExpensesTable)
+
+    var groupId by ExpensesTable.groupId
+    var payer by UserEntity referencedOn ExpensesTable.payerID
+    var amount by ExpensesTable.amount
+    var description by ExpensesTable.description
+    var borrowers by UserEntity via ExpenseBorrowersTable
+
+    // Convert to business logic model
+    fun toModel() = Expense(
+        id = id.value,
+        groupId = groupId.value,
+        payer = payer.toModel(),
+        amount = amount,
+        description = description,
+        borrowers = borrowers.toList().map { it.toModel() }
     )
 }
