@@ -8,7 +8,7 @@ import models.GroupResponse
 
 class HomeAPI: API() {
     suspend fun create(name: String): Result<GroupResponse> {
-        return post("/group/create", GroupCreateRequest(name, 1))
+        return post("/group/create", GroupCreateRequest(name))
     }
 
     suspend fun list(): Result<GroupListResponse> {

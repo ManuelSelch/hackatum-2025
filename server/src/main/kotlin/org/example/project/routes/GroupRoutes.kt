@@ -2,6 +2,8 @@ package org.example.project.routes
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -22,29 +24,38 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
     authenticate("auth-jwt") {
         route("/group") {
             post("/create") {
+                val principal = call.principal<JWTPrincipal>()
+                val userID = principal?.getClaim("uid", Long::class) ?: 0L
+
+                if (userID == 0L) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ErrorResponse("Invalid JWT")
+                    )
+                    return@post
+                }
+
                 val request = call.receive<GroupCreateRequest>();
-
                 val name = request.name.trim()
-                val creatorID = request.creatorID
 
-                if (name.isEmpty() || creatorID == 0L) {
+                if (name.isEmpty()) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        ErrorResponse("Missing required fields: name, creatorID")
+                        ErrorResponse("Missing required fields: name")
                     )
                     return@post
                 }
 
-                val existing = userDao.getById(creatorID)
-                if (existing == null) {
+                val user = userDao.getById(userID)
+                if (user == null) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        ErrorResponse("Invalid creatorID")
+                        ErrorResponse("User not found")
                     )
                     return@post
                 }
 
-                val group = groupDao.create(name, creatorID)
+                val group = groupDao.create(name, userID)
                 call.respond(HttpStatusCode.Created, group.toResponse())
             }
 

@@ -22,12 +22,12 @@ fun main() {
         .start(wait = true)
 }
 
-fun Application.module() {
-    val db = DatabaseManager.create("data/app.db")
+fun Application.module(testing: Boolean = false) {
+    val dbFileName = "data/app.db"
+    var db: DatabaseManager = if (testing) DatabaseManager.createTesting() else DatabaseManager.create(dbFileName)
     val users = UserDao(db)
     val groups = GroupDao(db)
 
-    // Install JSON content negotiation (accept and produce application/json)
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
@@ -36,7 +36,6 @@ fun Application.module() {
         })
     }
 
-    // JWT configuration from environment variables with safe defaults for development
     val jwtCfg = JwtConfig(
         secret = System.getenv("JWT_SECRET") ?: "dev-secret-change-me",
         issuer = System.getenv("JWT_ISSUER") ?: "hackatum-2025-server",

@@ -16,6 +16,7 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     jvm()
+    jvmToolchain(17)
 
     val ktorVersion = "3.3.2"
 

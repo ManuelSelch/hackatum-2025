@@ -56,8 +56,7 @@ data class LoginResponse(
 // request
 @Serializable
 data class GroupCreateRequest(
-    val name: String,
-    val creatorID: Long
+    val name: String
 )
 // response - see GroupResponse
 

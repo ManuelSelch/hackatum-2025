@@ -18,15 +18,18 @@ import java.sql.Connection
  * - Provide a Ktorm Database instance for queries.
  */
 class DatabaseManager private constructor(private val dbPath: String) {
-
-    private val jdbcUrl: String = "jdbc:sqlite:$dbPath"
-
-    private val db: Database = Database.connect(jdbcUrl)
+    private val db: Database = Database.connect(dbPath)
 
     init {
         transaction(db) {
             // Create tables if missing
-            SchemaUtils.createMissingTablesAndColumns(UsersTable, GroupsTable, GroupMembersTable, ExpensesTable, ExpenseBorrowersTable)
+            SchemaUtils.createMissingTablesAndColumns(
+                UsersTable,
+                GroupsTable,
+                GroupMembersTable,
+                ExpensesTable,
+                ExpenseBorrowersTable
+            )
         }
     }
 
@@ -35,17 +38,25 @@ class DatabaseManager private constructor(private val dbPath: String) {
 
     companion object {
         /**
+         * Create an in-memory SQLite database for testing purposes.
+         * The database will be shared across connections and persist for the lifetime of the process.
+         */
+        fun createTesting(): DatabaseManager {
+            return DatabaseManager("jdbc:sqlite:file:testdb?mode=memory&cache=shared")
+        }
+
+        /**
          * Create (or open) a SQLite database at the given path. If parent directories
          * are missing, they will be created. The schema is initialized on first use.
          */
-        @JvmStatic
         fun create(dbPath: String): DatabaseManager {
+            val path = "jdbc:sqlite:$dbPath"
             ensureParentDir(dbPath)
-            return DatabaseManager(dbPath)
+            return DatabaseManager(path)
         }
 
         private fun ensureParentDir(dbPath: String) {
-            val path: Path = Paths.get(dbPath)
+            val path = Paths.get(dbPath)
             val parent = path.toAbsolutePath().parent
             if (parent != null && !Files.exists(parent)) {
                 Files.createDirectories(parent)
