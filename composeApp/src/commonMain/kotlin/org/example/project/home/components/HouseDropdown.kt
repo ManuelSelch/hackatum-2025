@@ -17,7 +17,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun HouseDropdown(
     items: List<String>,
     label: String = "Select item",
-    onSelected: (String) -> Unit
+    onSelected: (String) -> Unit,
+    createHouseholdTapped: () -> Unit
 ) {
     AppTheme(){
         var expanded by remember { mutableStateOf(false) }
@@ -67,8 +68,7 @@ fun HouseDropdown(
                     leadingIcon = { Icon(Add, contentDescription = null) },
                     onClick = {
                         expanded = false
-                        // Create new Team
-
+                        createHouseholdTapped()
                     }
                 )
             }
@@ -81,5 +81,9 @@ fun HouseDropdown(
 @Preview
 
 fun HouseDropdownPreview(){
-    HouseDropdown(listOf("hello", "hello1", "hello2"), onSelected = {})
+    HouseDropdown(
+        listOf("hello", "hello1", "hello2"),
+        "Select item",
+        {}, {}
+    )
 }

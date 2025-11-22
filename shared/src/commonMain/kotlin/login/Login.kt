@@ -52,13 +52,7 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
                     dispatch(LoginAction.AuthSuccess)
                     emit(LoginEffect.NavigateToHome)
                 }
-                .onFailure { error ->
-                    val message: String = when (error) {
-                        is ApiException -> error.error?.error ?: "API error"
-                        else -> error.message ?: "Unknown error"
-                    }
-                    dispatch(LoginAction.AuthFailed(message))
-                }
+                .onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
         }
 
         return state.copy(isLoading = true)

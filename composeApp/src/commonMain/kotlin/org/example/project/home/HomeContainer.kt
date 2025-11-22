@@ -1,17 +1,12 @@
 package org.example.project.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import home.HomeAction
+import home.HomeRoute
 import home.HomeStore
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -20,7 +15,17 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun HomeContainer(store: HomeStore = HomeStore()) {
     val state by store.state.collectAsState()
 
-    HomeView(
-        households = state.households,
-    )
+    if(state.loading)
+        CircularProgressIndicator()
+
+    when(state.route) {
+        is HomeRoute.Dashboard -> HomeView(
+            households = state.households,
+            { store.dispatch(HomeAction.CreateHouseHoldTapped) }
+        )
+        is HomeRoute.CreateHouseHold -> CreateHouseholdView(
+            { store.dispatch(HomeAction.CreateHouseHold(it)) }
+        )
+   }
+
 }

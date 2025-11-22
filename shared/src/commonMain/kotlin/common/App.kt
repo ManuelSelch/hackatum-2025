@@ -1,6 +1,7 @@
 package common
 
 import common.AppEffect.*
+import home.HomeStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,6 +29,7 @@ sealed class AppEffect {
 
 class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
     val login = LoginStore()
+    val home = HomeStore()
 
     init {
         scope.launch {

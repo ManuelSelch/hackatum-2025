@@ -24,10 +24,12 @@ import org.example.project.theme.icons.Receipt_long
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun HomeView(households: List<String>) {
+fun HomeView(
+    households: List<String>,
+    createHouseholdTapped: () -> Unit,
+) {
     AppTheme(darkTheme = false) {
         Column(Modifier.fillMaxSize()
-
             .background(color = MaterialTheme.colorScheme.background)
             .safeContentPadding())
         {
@@ -35,9 +37,10 @@ fun HomeView(households: List<String>) {
                     HouseDropdown(
                         items = households,
                         label = "Select a House",
-                    ) {
+                        {} ,
+                        createHouseholdTapped,
+                    )
 
-                    }
                     // Dashboard Summary
                     // Monthly In/Out
                     // Running Low?
@@ -200,6 +203,7 @@ fun HomeView(households: List<String>) {
 @Preview
 fun HomePreview() {
     HomeView(
-        listOf("a", "b", "c")
+        listOf("a", "b", "c"),
+        {}
     )
 }

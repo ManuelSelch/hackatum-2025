@@ -23,7 +23,7 @@ fun AppContainer() {
     Column {
         when(state.route) {
             AppRoute.Login -> LoginContainer(app.login)
-            AppRoute.Home -> HomeContainer()
+            AppRoute.Home -> HomeContainer(app.home)
         }
     }
 }
