@@ -7,7 +7,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import org.example.project.theme.AppColors.LocalCustomBrushes
@@ -46,7 +45,7 @@ object AppColors {
     val bordermuted = hsl(218f, 0.46f, 0.66f)
     val primary = hsl(218f, 0.52f, 0.32f)
     val secondary = hsl(43f, 1.0f, 0.15f)
-    val danger = hsl(8f, 0.32f, 0.41f)
+    val danger = hsl(6f, 0.60f, 0.41f)
     val warning = hsl(51f, 0.46f, 0.3f)
     val success = hsl(150f, 0.37f, 0.33f)
     val info = hsl(217f, 0.34f, 0.43f)
@@ -103,6 +102,7 @@ object AppColors {
     data class CustomBrushes(
         val gradient: Brush,
         val gradientHover: Brush,
+        val primaryGradient: Brush,
     )
 
     val LocalCustomBrushes = staticCompositionLocalOf<CustomBrushes> {
@@ -122,7 +122,7 @@ object AppColors {
         ) {
             // NOW CustomBrushes sees the corrected colorScheme
             val brushes = CustomBrushes(
-                gradient = Brush.verticalGradient(
+                gradient = Brush.linearGradient(
                     listOf(
                         MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.background,
@@ -130,10 +130,17 @@ object AppColors {
                         MaterialTheme.colorScheme.surface
                     )
                 ),
-                gradientHover = Brush.verticalGradient(
+                gradientHover = Brush.linearGradient(
                     listOf(
                         MaterialTheme.colorScheme.background,
                         MaterialTheme.colorScheme.surface
+                    )
+                ),
+                primaryGradient = Brush.linearGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.outlineVariant,
+                        MaterialTheme.colorScheme.outline,
+                        MaterialTheme.colorScheme.primary,
                     )
                 )
             )

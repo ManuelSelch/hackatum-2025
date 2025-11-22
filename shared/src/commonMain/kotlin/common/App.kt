@@ -1,21 +1,19 @@
 package common
 
-import common.AppEffect.*
 import home.HomeStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import login.LoginEffect
 import login.LoginStore
+import pantry.PantryStore
 
 data class AppState(
-    val route: AppRoute = AppRoute.Login,
+    val route: AppRoute = AppRoute.Pantry,
 )
 
 sealed class AppRoute {
     object Login : AppRoute()
     object Home : AppRoute()
+    object Pantry : AppRoute()
 }
 
 sealed class AppAction {
@@ -30,6 +28,7 @@ sealed class AppEffect {
 class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
     val login = LoginStore()
     val home = HomeStore()
+    val pantry = PantryStore()
 
     init {
         scope.launch {
