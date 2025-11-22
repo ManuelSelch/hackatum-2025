@@ -1,4 +1,4 @@
-package org.example.project.db
+package models
 
 import kotlinx.serialization.Serializable
 

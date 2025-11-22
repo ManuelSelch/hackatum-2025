@@ -1,4 +1,5 @@
 package org.example.project.db
+import models.User
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.transaction
 

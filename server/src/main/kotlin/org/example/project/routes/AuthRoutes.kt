@@ -8,6 +8,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
+import models.ErrorResponse
+import models.LoginRequest
+import models.LoginResponse
+import models.RegisterRequest
+import models.UserResponse
 import org.example.project.auth.JwtService
 import org.example.project.db.UserDao
 
@@ -15,39 +20,6 @@ import org.example.project.db.UserDao
  * Authentication-related routes: register and login.
  */
 
-// Request/Response models
-@Serializable
-data class RegisterRequest(
-    val name: String,
-    val email: String,
-    val password: String
-)
-
-@Serializable
-data class LoginRequest(
-    val email: String,
-    val password: String
-)
-
-@Serializable
-data class UserResponse(
-    val id: Long,
-    val name: String,
-    val email: String,
-    val createdAt: String? = null
-)
-
-@Serializable
-data class LoginResponse(
-    val message: String,
-    val token: String,
-    val user: UserResponse
-)
-
-@Serializable
-data class ErrorResponse(
-    val error: String
-)
 
 fun Route.authRoutes(userDao: UserDao, jwt: JwtService) {
     route("/auth") {
