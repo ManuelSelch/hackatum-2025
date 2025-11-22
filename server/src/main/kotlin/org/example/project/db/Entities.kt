@@ -1,5 +1,7 @@
 package org.example.project.db
 
+import models.Group
+import models.User
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

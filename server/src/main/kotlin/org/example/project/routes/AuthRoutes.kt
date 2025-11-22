@@ -12,6 +12,7 @@ import models.ErrorResponse
 import models.LoginRequest
 import models.LoginResponse
 import models.RegisterRequest
+import models.User
 import models.UserResponse
 import org.example.project.auth.JwtService
 import org.example.project.db.UserDao

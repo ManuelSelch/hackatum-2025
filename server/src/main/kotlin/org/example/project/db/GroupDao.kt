@@ -3,7 +3,6 @@ import models.Group
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.and
 
 /**
  * DAO for groups and group membership using Exposed entities.
@@ -49,11 +48,6 @@ class GroupDao(private val dbManager: DatabaseManager) {
         }
     }
 
-    /** Count total groups. */
-    fun count(): Long = transaction(database) {
-        GroupEntity.count()
-    }
-
     // endregion
 
     // region Membership management
@@ -91,4 +85,7 @@ class GroupDao(private val dbManager: DatabaseManager) {
         group.members = SizedCollection(group.members - user)
         return@transaction true
     }
+
+    /** Get groups a user belongs to */
+
 }

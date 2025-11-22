@@ -62,9 +62,4 @@ class UserDao(private val dbManager: DatabaseManager) {
             false
         }
     }
-
-    /** Count total users. */
-    fun count(): Long = transaction(database) {
-        UserEntity.count()
-    }
 }
