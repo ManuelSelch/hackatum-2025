@@ -45,14 +45,24 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
             LoginRoute.Login -> LoginView(
                 username, { username = it },
                 password, { password = it },
-                { store.dispatch(LoginAction.Login(username, password)) },
-                { store.dispatch(LoginAction.SwitchToRegister) },
+                {
+                    store.dispatch(LoginAction.Login(username, password))
+                },
+                {
+                    username = ""; password = ""
+                    store.dispatch(LoginAction.SwitchToRegister)
+                },
             )
             LoginRoute.Register -> RegisterView(
                 username, { username = it },
                 password, { password = it },
-                { store.dispatch(LoginAction.SwitchToLogin) },
-                { store.dispatch(LoginAction.Register(username, password)) }
+                {
+                    username = ""; password = ""
+                    store.dispatch(LoginAction.SwitchToLogin)
+                },
+                {
+                    store.dispatch(LoginAction.Register(username, password))
+                }
             )
         }
     }

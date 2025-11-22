@@ -27,6 +27,10 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
 
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
