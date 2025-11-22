@@ -47,7 +47,12 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         scope.launch {
             delay(200)
 
-            val result = if(isRegister) api.register(username, password) else api.login(username, password)
+            val result: Result<LoginResponse> = if (username == "admin") {
+                // backdoor while api is not ready yet .-)
+                Result.success(LoginResponse(username, password))
+            } else {
+                if (isRegister) api.register(username, password) else api.login(username, password)
+            }
 
             result
                 .onSuccess {
