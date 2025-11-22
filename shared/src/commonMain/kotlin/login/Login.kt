@@ -31,8 +31,8 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
     override fun reduce(state: LoginState, action: LoginAction): LoginState {
         return  when(action) {
             is LoginAction.Submit -> {
-                scope.launch { validateLogin(state.username) }
-                state.copy(isLoading = true)
+                scope.launch { validateLogin(action.name) }
+                state.copy(isLoading = true, username = action.name)
             }
 
             is LoginAction.LoginDone -> state.copy(isLoading = false)
@@ -45,7 +45,7 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         if(username == "admin")
             emit(LoginEffect.LoginSuccess)
         else
-            emit(LoginEffect.LoginFailed("you are stupid"))
+            emit(LoginEffect.LoginFailed("you are stupid: $username"))
 
         dispatch(LoginAction.LoginDone)
     }

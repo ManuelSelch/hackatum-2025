@@ -36,7 +36,7 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
                 println(effect.toString())
                 when (effect) {
                     is LoginEffect.LoginSuccess -> dispatch(AppAction.Navigate(AppRoute.Home))
-                    is LoginEffect.LoginFailed -> dispatch(AppAction.Navigate(AppRoute.Home))
+                    is LoginEffect.LoginFailed -> { }
                 }
             }
         }
