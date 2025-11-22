@@ -1,7 +1,4 @@
-@file:OptIn(ExperimentalSwiftExportDsl::class)
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -17,17 +14,8 @@ kotlin {
     
     iosArm64()
     iosSimulatorArm64()
-    
     jvm()
 
-    swiftExport {
-        moduleName = "Shared"
-        flattenPackage = "org.example.project"
-
-        configure {
-            freeCompilerArgs.add("-Xexpect-actual-classes")
-        }
-    }
     
     sourceSets {
         commonMain.dependencies {

@@ -21,14 +21,9 @@ fun AppContainer() {
     val state by app.state.collectAsState()
 
     Column {
-        Text(text = state.route.toString())
-
         when(state.route) {
             AppRoute.Login -> LoginContainer(app.login)
             AppRoute.Home -> HomeContainer()
         }
     }
-
-
-
 }

@@ -34,6 +34,16 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		9700EFAF2ED1F57700F499AC /* Home */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9700EFB02ED1F57D00F499AC /* Login */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Login;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +63,8 @@
 				88FA26175C015310C71B5BE7 /* Configuration */,
 				0C45D570A31B984BB5607BC1 /* iosApp */,
 				9FDC4BF6A4BDAA2CADE8D710 /* Products */,
+				9700EFAF2ED1F57700F499AC /* Home */,
+				9700EFB02ED1F57D00F499AC /* Login */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +94,8 @@
 			);
 			fileSystemSynchronizedGroups = (
 				0C45D570A31B984BB5607BC1 /* iosApp */,
+				9700EFAF2ED1F57700F499AC /* Home */,
+				9700EFB02ED1F57D00F499AC /* Login */,
 			);
 			name = iosApp;
 			packageProductDependencies = (
@@ -114,6 +128,8 @@
 			);
 			mainGroup = 3F15338C56D0052B7272AFA2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9FDC4BF6A4BDAA2CADE8D710 /* Products */;
 			projectDirPath = "";
@@ -137,6 +153,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		E1CDABB73FD0019DFF1DEB2E /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -151,7 +168,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedSwiftExportForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
