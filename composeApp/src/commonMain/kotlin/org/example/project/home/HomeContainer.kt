@@ -19,13 +19,15 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
         CircularProgressIndicator()
 
     when(state.route) {
-        is HomeRoute.Dashboard -> HomeView(
+        HomeRoute.Dashboard -> HomeView(
             households = state.households,
             { store.dispatch(HomeAction.CreateHouseHoldTapped) }
         )
-        is HomeRoute.CreateHouseHold -> CreateHouseholdView(
+        HomeRoute.CreateHouseHold -> CreateHouseholdView(
             { store.dispatch(HomeAction.CreateHouseHold(it)) }
         )
+        HomeRoute.Join -> Text("Join")
+        HomeRoute.Invite -> Text("Invite")
    }
 
 }
