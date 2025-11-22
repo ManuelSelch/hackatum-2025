@@ -14,9 +14,9 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-// Ensure Java 17 toolchain for server module
+// Ensure Java 21 toolchain for server module
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 dependencies {
