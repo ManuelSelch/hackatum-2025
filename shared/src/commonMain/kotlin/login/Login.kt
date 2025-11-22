@@ -1,6 +1,7 @@
 package login
 
 import common.Store
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class LoginState(
@@ -44,6 +45,8 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
 
     fun handleAuth(state: LoginState, username: String, password: String, isRegister: Boolean): LoginState {
         scope.launch {
+            delay(200)
+
             val result = if(isRegister) api.register(username, password) else api.login(username, password)
 
             result

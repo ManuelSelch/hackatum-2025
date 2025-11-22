@@ -38,13 +38,13 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         if(state.isLoading)
             CircularProgressIndicator()
 
         when(state.route) {
             LoginRoute.Login -> LoginView(
                 username, { username = it },
+                password, { password = it },
                 { store.dispatch(LoginAction.Login(username, password)) },
                 { store.dispatch(LoginAction.SwitchToRegister) },
             )

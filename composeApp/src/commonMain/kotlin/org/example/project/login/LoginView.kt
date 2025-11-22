@@ -20,6 +20,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun LoginView(
     username: String, usernameChanged: (String) -> Unit,
+    password: String, passwordChanged: (String) -> Unit,
     loginTapped: () -> Unit,
     registerTapped: () -> Unit,
 ) {
@@ -38,7 +39,7 @@ fun LoginView(
         )
 
         TextField(
-            value = username, onValueChange = usernameChanged,
+            value = password, onValueChange = passwordChanged,
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -63,5 +64,9 @@ fun LoginView(
 @Composable
 @Preview
 fun LoginPreview() {
-    LoginView("", {}, {}, {})
+    LoginView(
+        "", {},
+        "", {},
+        {}, {}
+    )
 }
