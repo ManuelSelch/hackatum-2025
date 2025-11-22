@@ -1,6 +1,8 @@
 package org.example.project.db
 
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.charLength
 
 /**
  * Exposed table mappings using IdTable for DAO pattern.
@@ -32,10 +34,13 @@ object ExpenseBorrowersTable : LongIdTable("expense_borrowers") {
     val userId = reference("user_id", UsersTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
 }
 
-object PantryItem : LongIdTable("pantry_items") {
-    // name
-    // amount
-    // unit
-    // groupId
-    // category
+object PantryItem : Table("pantry_items") {
+    val groupId = reference("group_id", GroupsTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
+    val name = varchar("name", length = 255).check { it.charLength() greater 3}
+    val unit = varchar("unit", length = 255).check { it.charLength() greater 0}
+    val quantity = integer("quantity")
+    val minimumQuantity = integer("minimum_quantity")
+    val category = varchar("category", length = 255)
+
+    override val primaryKey = PrimaryKey(groupId, name)
 }

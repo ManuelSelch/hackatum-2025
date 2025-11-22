@@ -88,13 +88,10 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 val request = call.receive<GroupJoinRequest>()
                 val groupID = request.groupID
 
-                val success = groupDao.addUser(groupID, userID)
-                if (!success) {
-                    call.respond(HttpStatusCode.BadRequest, ErrorResponse("Invalid groupID"))
-                    return@post
-                }
-
-                call.respond(HttpStatusCode.OK)
+                val result = groupDao.addUser(groupID, userID)
+                result
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, ErrorResponse(it.message?: "Unknown error")) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
             }
         }
     }
