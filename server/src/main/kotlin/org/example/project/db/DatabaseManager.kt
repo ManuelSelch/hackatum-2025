@@ -42,7 +42,9 @@ class DatabaseManager private constructor(private val dbPath: String) {
          * The database will be shared across connections and persist for the lifetime of the process.
          */
         fun createTesting(): DatabaseManager {
-            return DatabaseManager("jdbc:sqlite:file:testdb?mode=memory&cache=shared")
+            val unique = java.util.UUID.randomUUID().toString()
+            // Each test application instance gets its own isolated in-memory DB
+            return DatabaseManager("jdbc:sqlite:/tmp/testdb-$unique")
         }
 
         /**

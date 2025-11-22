@@ -31,3 +31,11 @@ object ExpenseBorrowersTable : LongIdTable("expense_borrowers") {
     val expenseId = reference("expense_id", ExpensesTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
     val userId = reference("user_id", UsersTable, onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE)
 }
+
+object PantryItem : LongIdTable("pantry_items") {
+    // name
+    // amount
+    // unit
+    // groupId
+    // category
+}

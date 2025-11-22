@@ -22,7 +22,23 @@ import org.example.project.db.toResponse
 
 fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
     authenticate("auth-jwt") {
-        route("/group") {
+        route("/groups") {
+            get("") {
+                val principal = call.principal<JWTPrincipal>()
+                val userID = principal?.getClaim("uid", Long::class) ?: 0L
+
+                if (userID == 0L) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        ErrorResponse("Invalid JWT")
+                    )
+                    return@get
+                }
+
+                val groups = groupDao.listUserGroups(userID)
+                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
+            }
+
             post("/create") {
                 val principal = call.principal<JWTPrincipal>()
                 val userID = principal?.getClaim("uid", Long::class) ?: 0L
@@ -72,15 +88,6 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 }
 
                 call.respond(HttpStatusCode.OK)
-            }
-
-            get("/list") {
-                val request = call.receive<GroupListRequest>()
-
-                val userID = request.userID
-
-                val groups = groupDao.listUserGroups(userID)
-                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
             }
         }
     }
