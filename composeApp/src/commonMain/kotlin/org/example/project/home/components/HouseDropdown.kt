@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.icons.Add
 import org.example.project.theme.icons.Arrow_drop_down
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -19,7 +18,6 @@ fun HouseDropdown(
     label: String = "Select item",
     onSelected: (String) -> Unit
 ) {
-    AppTheme(){
         var expanded by remember { mutableStateOf(false) }
         var selected by remember { mutableStateOf(items.firstOrNull() ?: "") }
 
@@ -73,7 +71,7 @@ fun HouseDropdown(
                 )
             }
         }
-    }
+
 
 }
 
