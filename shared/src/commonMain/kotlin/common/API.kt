@@ -3,6 +3,7 @@ package common
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -40,6 +41,29 @@ open class API {
             println("POST $endpoint with token $token")
 
             val response = client.post(URL + endpoint) {
+                header("Authorization", "Bearer $token")
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }
+
+            // parse error response
+            if (!response.status.isSuccess()) {
+                val errorBody = try { response.body<ErrorResponse>() } catch (e: Exception) { null }
+                return Result.failure(ApiException(response.status.value, errorBody))
+            }
+
+            Result.success(response.body())
+        } catch (e: Exception) {
+            println("error: $e")
+            Result.failure(e)
+        }
+    }
+
+    suspend inline fun <reified I, reified O> get(endpoint: String, request: I): Result<O> {
+        return try {
+            println("POST $endpoint with token $token")
+
+            val response = client.get(URL + endpoint) {
                 header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(request)

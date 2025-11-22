@@ -3,6 +3,7 @@ package home
 import common.Store
 import kotlinx.coroutines.launch
 import login.LoginAction
+import models.GroupResponse
 
 data class HomeState(
     val households: List<String> = listOf("a", "b", "c"),
@@ -22,12 +23,17 @@ sealed class HomeAction {
 
     data object HouseholdCreated: HomeAction()
     data class HouseholdFailed(val error: String): HomeAction()
+    data class HouseholdsFetched(val households: List<String>): HomeAction()
 }
 
 sealed class HomeEffect {}
 
 class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
     private val api = HomeAPI()
+
+    init {
+        fetchHouseholds()
+    }
 
     override fun reduce(state: HomeState, action: HomeAction): HomeState {
         println(action)
@@ -37,6 +43,7 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
             is HomeAction.CreateHouseHold -> createHousehold(state, action.name)
             is HomeAction.HouseholdCreated -> state.copy(loading = false, error = null, route = HomeRoute.Dashboard)
             is HomeAction.HouseholdFailed -> state.copy(loading = false, error = action.error)
+            is HomeAction.HouseholdsFetched -> state.copy(households = action.households, loading = false, error = null)
         }
     }
 
@@ -48,6 +55,7 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
                 .onSuccess { household ->
                     println("success: $household")
                     dispatch(HomeAction.HouseholdCreated)
+                    fetchHouseholds()
                 }
                 .onFailure { error ->
                     println("error: $error")
@@ -56,5 +64,16 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
         }
 
         return state.copy(loading = true, error = null)
+    }
+
+    fun fetchHouseholds() {
+        scope.launch {
+            api.list()
+                .onSuccess { res ->
+                    val households = res.groups.map { g -> g.name }.toList()
+                    dispatch(HomeAction.HouseholdsFetched(households))
+                }
+                .onFailure { error -> dispatch(HomeAction.HouseholdFailed(error.toString()))}
+        }
     }
 }
