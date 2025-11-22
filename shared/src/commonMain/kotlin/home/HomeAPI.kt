@@ -16,6 +16,6 @@ class HomeAPI: API() {
     }
 
     suspend fun join(groupId: Long): Result<GroupResponse> {
-        return post("/group/join", GroupJoinRequest(groupId, 1))
+        return post("/group/join", GroupJoinRequest(groupId))
     }
 }

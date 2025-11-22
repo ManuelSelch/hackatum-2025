@@ -21,13 +21,21 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
     when(state.route) {
         HomeRoute.Dashboard -> HomeView(
             households = state.households,
-            { store.dispatch(HomeAction.CreateHouseHoldTapped) }
+            { store.dispatch(HomeAction.CreateHouseHoldTapped) },
+            { store.dispatch(HomeAction.JoinTapped)},
+            { store.dispatch((HomeAction.InviteTapped)) }
         )
         HomeRoute.CreateHouseHold -> CreateHouseholdView(
             { store.dispatch(HomeAction.CreateHouseHold(it)) }
         )
-        HomeRoute.Join -> Text("Join")
-        HomeRoute.Invite -> Text("Invite")
+        HomeRoute.Join -> JoinView(
+            {store.dispatch(HomeAction.Join(it))},
+            backTapped = { store.dispatch(HomeAction.BackTapped) }
+        )
+        HomeRoute.Invite -> InviteView(
+            state.groupId,
+            backTapped = { store.dispatch(HomeAction.BackTapped) }
+        )
    }
 
 }

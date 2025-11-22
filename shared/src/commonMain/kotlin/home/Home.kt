@@ -8,6 +8,7 @@ data class HomeState(
     val route: HomeRoute = HomeRoute.Dashboard,
     val loading: Boolean = false,
     val error: String? = null,
+    val groupId: Long? = null
 )
 
 enum class HomeRoute { Dashboard, CreateHouseHold, Invite, Join }
@@ -23,8 +24,10 @@ sealed class HomeAction {
     data object InviteTapped: HomeAction()
     data object JoinTapped: HomeAction()
 
-    data class Join(val groupId: Long): HomeAction()
+    data class Join(val groupId: String): HomeAction()
     data object JoinSuccess: HomeAction()
+
+    data object BackTapped: HomeAction()
 }
 
 sealed class HomeEffect {}
@@ -47,6 +50,8 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
 
             is HomeAction.Join -> join(state, action.groupId)
             is HomeAction.JoinSuccess -> state.copy(loading = false, error = null, route = HomeRoute.Dashboard)
+
+            is HomeAction.BackTapped -> state.copy(route = HomeRoute.Dashboard)
         }
     }
 
@@ -78,9 +83,11 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
                 .onFailure { error -> dispatch(HomeAction.Failed(error.toString()))}
         }
     }
-    fun join(state: HomeState, groupId: Long): HomeState {
+    fun join(state: HomeState, groupId: String): HomeState {
+        val groupIdParsed = groupId.toLongOrNull() ?: return state
+
         scope.launch {
-            api.join(groupId)
+            api.join(groupIdParsed)
                 .onSuccess {  }
                 .onFailure { error -> dispatch(HomeAction.Failed(error.toString()))}
         }

@@ -2,6 +2,7 @@ package org.example.project.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +21,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun HomeView(
     households: List<String>,
     createHouseholdTapped: () -> Unit,
+    joinTapped: () -> Unit,
+    inviteTapped: () -> Unit,
 ) {
     AppTheme() {
         Surface {
@@ -29,13 +32,24 @@ fun HomeView(
                     .safeContentPadding()
             )
             {
-                // Household Selector
+                // household Selector
                 HouseDropdown(
                     items = households,
                     label = "Select a House",
                     {},
                     createHouseholdTapped
                 )
+
+                // join & invite
+                Row {
+                    Button(onClick = joinTapped) {
+                        Text("Join")
+                    }
+
+                    Button(onClick = inviteTapped) {
+                        Text("Invite")
+                    }
+                }
                 Column(Modifier.fillMaxWidth().wrapContentHeight()) {
                     // Debts
                     Column(modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(32.dp, 16.dp)) {
@@ -119,6 +133,7 @@ fun HomeView(
 fun HomePreview() {
     HomeView(
         listOf("a", "b", "c"),
-        {}
+        {},
+        {}, {}
     )
 }
