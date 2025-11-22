@@ -1,9 +1,11 @@
 package org.example.project.db
-
-import org.ktorm.dsl.*
+import org.jetbrains.exposed.sql.SizedCollection
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.and
 
 /**
- * DAO for groups and group membership using Ktorm + SQLite.
+ * DAO for groups and group membership using Exposed entities.
  * Uses a junction table (group_members) to relate users to groups.
  */
 class GroupDao(private val dbManager: DatabaseManager) {
@@ -12,48 +14,43 @@ class GroupDao(private val dbManager: DatabaseManager) {
 
     // region Groups CRUD
 
-    fun create(name: String): DbGroup {
-        val id = database.insertAndGenerateKey(Groups) {
-            set(Groups.name, name)
-        } as Long
-        return getById(id) ?: throw IllegalStateException("Inserted group not found by id=$id")
+    /** Create a new group. Returns the created Group with generated id. */
+    fun create(name: String): Group {
+        return transaction(database) {
+            GroupEntity.new {
+                this.name = name
+                this.createdAt = System.currentTimeMillis().toString()
+            }.toModel()
+        }
     }
 
-    fun getById(id: Long): DbGroup? {
-        return database
-            .from(Groups)
-            .select(Groups.id, Groups.name, Groups.createdAt)
-            .where { Groups.id eq id }
-            .limit(1)
-            .map { row ->
-                DbGroup(
-                    id = row[Groups.id]!!,
-                    name = row[Groups.name]!!,
-                    createdAt = row[Groups.createdAt]
-                )
-            }
-            .firstOrNull()
+    /** Retrieve a group by id, or null if not found. Includes members automatically. */
+    fun getById(id: Long): Group? = transaction(database) {
+        GroupEntity.findById(id)?.toModel()
     }
 
-    fun list(limit: Int = 100, offset: Int = 0): List<DbGroup> {
-        return database
-            .from(Groups)
-            .select(Groups.id, Groups.name, Groups.createdAt)
-            .orderBy(Groups.id.asc())
+    /** List groups with pagination. */
+    fun list(limit: Int = 100, offset: Long = 0): List<Group> = transaction(database) {
+        GroupEntity.all()
+            .orderBy(GroupsTable.id to SortOrder.ASC)
             .limit(limit, offset)
-            .map { row ->
-                DbGroup(
-                    id = row[Groups.id]!!,
-                    name = row[Groups.name]!!,
-                    createdAt = row[Groups.createdAt]
-                )
-            }
+            .map { it.toModel() }
     }
 
-    fun deleteById(id: Long): Boolean {
-        // ON DELETE CASCADE in schema removes memberships
-        val affected = database.delete(Groups) { it.id eq id }
-        return affected > 0
+    /** Delete a group by id. Returns true if a row was deleted. */
+    fun deleteById(id: Long): Boolean = transaction(database) {
+        val entity = GroupEntity.findById(id)
+        if (entity != null) {
+            entity.delete()
+            true
+        } else {
+            false
+        }
+    }
+
+    /** Count total groups. */
+    fun count(): Long = transaction(database) {
+        GroupEntity.count()
     }
 
     // endregion
@@ -61,55 +58,36 @@ class GroupDao(private val dbManager: DatabaseManager) {
     // region Membership management
 
     /**
-     * Add a user to a group. Returns true if a new membership row was inserted.
-     * If the membership already exists, returns false (idempotent).
+     * Add a user to a group. Returns true if inserted, false if it already existed (idempotent).
+     * GroupMember is internal and not exposed.
      */
-    fun addUser(groupId: Long, userId: Long): Boolean {
-        // Use SQLite-specific INSERT OR IGNORE to make this idempotent.
-        var inserted = false
-        database.useConnection { conn ->
-            conn.prepareStatement("INSERT OR IGNORE INTO group_members(group_id, user_id) VALUES (?, ?)").use { ps ->
-                ps.setLong(1, groupId)
-                ps.setLong(2, userId)
-                inserted = ps.executeUpdate() > 0
-            }
+    fun addUser(groupId: Long, userId: Long): Boolean = transaction(database) {
+        val group = GroupEntity.findById(groupId) ?: return@transaction false
+        val user = UserEntity.findById(userId) ?: return@transaction false
+
+        // Check if user already exists in group
+        if (group.members.any { it.id.value == userId }) {
+            return@transaction false // Already a member
         }
-        return inserted
+
+        // Add user to group
+        group.members = SizedCollection(group.members + user)
+        return@transaction true
     }
+
 
     /** Remove a user from a group. Returns true if a row was deleted. */
-    fun removeUser(groupId: Long, userId: Long): Boolean {
-        val affected = database.delete(GroupMembers) { (it.groupId eq groupId) and (it.userId eq userId) }
-        return affected > 0
-    }
+    fun removeUser(groupId: Long, userId: Long): Boolean = transaction(database) {
+        val group = GroupEntity.findById(groupId) ?: return@transaction false
+        val user = UserEntity.findById(userId) ?: return@transaction false
 
-    /** List DbUser members of a group. */
-    fun getMembers(groupId: Long, limit: Int = 100, offset: Int = 0): List<DbUser> {
-        return database
-            .from(GroupMembers)
-            .leftJoin(Users, on = GroupMembers.userId eq Users.id)
-            .select(Users.id, Users.name, Users.email, Users.password, Users.createdAt)
-            .where { GroupMembers.groupId eq groupId }
-            .orderBy(Users.id.asc())
-            .limit(limit, offset)
-            .mapNotNull { row ->
-                val id = row[Users.id] ?: return@mapNotNull null
-                DbUser(
-                    id = id,
-                    name = row[Users.name]!!,
-                    email = row[Users.email]!!,
-                    password = row[Users.password]!!,
-                    createdAt = row[Users.createdAt]
-                )
-            }
-    }
+        // Check if user is a member of the group
+        if (!group.members.any { it.id.value == userId }) {
+            return@transaction false // Not a member
+        }
 
-    /** Convenience to fetch a group and its members together. */
-    fun getByIdWithMembers(id: Long): Pair<DbGroup, List<DbUser>>? {
-        val grp = getById(id) ?: return null
-        val members = getMembers(id, limit = Int.MAX_VALUE, offset = 0)
-        return grp to members
+        // Remove user from group
+        group.members = SizedCollection(group.members - user)
+        return@transaction true
     }
-
-    // endregion
 }

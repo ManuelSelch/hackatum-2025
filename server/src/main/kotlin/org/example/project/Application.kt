@@ -15,7 +15,6 @@ import org.example.project.db.DatabaseManager
 import org.example.project.db.GroupDao
 import org.example.project.db.UserDao
 import org.example.project.routes.authRoutes
-import org.example.project.routes.groupRoutes
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -25,7 +24,7 @@ fun main() {
 }
 
 fun Application.module() {
-    val dbPath = "data/app.db"
+    val dbPath = System.getProperty("db.path") ?: System.getenv("DB_PATH") ?: "data/app.db"
     val db = DatabaseManager.create(dbPath)
     val users = UserDao(db)
     val groups = GroupDao(db)
@@ -62,8 +61,5 @@ fun Application.module() {
 
         // Auth endpoints: /auth/register and /auth/login
         authRoutes(users, jwt)
-
-        // Group endpoints (JWT-protected): /groups, /groups/{id}, membership management
-        groupRoutes(groups, users)
     }
 }

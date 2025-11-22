@@ -36,9 +36,10 @@ dependencies {
     // SQLite JDBC driver for simple file-based database access
     implementation("org.xerial:sqlite-jdbc:3.46.1.0")
 
-    // Ktorm ORM for Kotlin + SQLite support
-    implementation("org.ktorm:ktorm-core:3.6.0")
-    implementation("org.ktorm:ktorm-support-sqlite:3.6.0")
+    // Exposed ORM (replace Ktorm)
+    implementation("org.jetbrains.exposed:exposed-core:0.54.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.54.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.54.0")
 
     // Ktor OpenAPI + Swagger UI (Option A)
     implementation("io.ktor:ktor-server-openapi-jvm:3.3.1")
