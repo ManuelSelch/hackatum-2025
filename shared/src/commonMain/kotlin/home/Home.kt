@@ -36,7 +36,7 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
     private val api = HomeAPI()
 
     override fun reduce(state: HomeState, action: HomeAction): HomeState {
-        println(action)
+        println("action:\t $action")
 
         return when (action) {
             is HomeAction.CreateHouseHoldTapped -> state.copy(route = HomeRoute.CreateHouseHold)
@@ -84,11 +84,11 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
         }
     }
     fun join(state: HomeState, groupId: String): HomeState {
-        val groupIdParsed = groupId.toLongOrNull() ?: return state
+        val groupIdParsed = groupId.toLongOrNull() ?: return state.copy(loading = false, error = "Group ID is missing")
 
         scope.launch {
             api.join(groupIdParsed)
-                .onSuccess {  }
+                .onSuccess { dispatch(HomeAction.JoinSuccess) }
                 .onFailure { error -> dispatch(HomeAction.Failed(error.toString()))}
         }
 
