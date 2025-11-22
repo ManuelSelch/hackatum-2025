@@ -19,6 +19,7 @@ import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import login.LoginAction
+import login.LoginRoute
 import login.LoginStore
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -27,7 +28,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun LoginContainer(store: LoginStore = LoginStore()) {
     val state by store.state.collectAsState()
 
-    var username by remember { mutableStateOf(state.username) }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -37,17 +39,21 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        if(state.isLoading) {
+        if(state.isLoading)
             CircularProgressIndicator()
-        }
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
 
-        Button(onClick = { store.dispatch(LoginAction.Submit(username)) }) {
-            Text("Login")
+        when(state.route) {
+            LoginRoute.Login -> LoginView(
+                username, { username = it },
+                { store.dispatch(LoginAction.Login(username, password)) },
+                { store.dispatch(LoginAction.SwitchToRegister) },
+            )
+            LoginRoute.Register -> RegisterView(
+                username, { username = it },
+                password, { password = it },
+                { store.dispatch(LoginAction.SwitchToLogin) },
+                { store.dispatch(LoginAction.Register(username, password)) }
+            )
         }
     }
 }
