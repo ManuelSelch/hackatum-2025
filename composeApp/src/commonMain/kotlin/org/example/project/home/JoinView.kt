@@ -21,6 +21,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun JoinView(
     join: (groupId: String) -> Unit,
     backTapped: () -> Unit,
+    scanner: @Composable () -> Unit
 ) {
     var groupId by remember { mutableStateOf("") }
 
@@ -31,7 +32,14 @@ fun JoinView(
             .padding(16.dp),
     ) {
         Text("Join")
-        TextField(groupId, onValueChange = { groupId = it }, label = { Text("Group ID") })
+
+        TextField(
+            groupId, onValueChange = { groupId = it },
+            label = { Text("Group ID") },
+            singleLine = true
+        )
+
+        scanner()
 
         Row {
             Button(onClick = { join(groupId) }) {
@@ -48,6 +56,7 @@ fun JoinView(
 @Preview
 fun JoinPreview() {
     JoinView(
+        {},
         {},
         {}
     )
