@@ -14,8 +14,3 @@ object PantryItemsTable : Table("pantry_items") {
 
     override val primaryKey = PrimaryKey(groupID, name)
 }
-
-// Basic crud operations
-
-// 1. ich bekomme groupid -> Liste von Items
-// 2. ich bekomme groupid -> Liste von Items out of Stock

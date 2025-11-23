@@ -42,3 +42,13 @@ data class PantryItemResponse(
     val unit: String,
     val minimumQuantity: Int,
 )
+
+@Serializable
+data class PantryItemRequest(
+    val groupId: Long,
+    val name: String,
+    val quantity: Int,
+    val category: String,
+    val unit: String,
+    val minimumQuantity: Int,
+)

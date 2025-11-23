@@ -27,7 +27,7 @@ class UserDao() {
             ?.toModel()
     }
 
-    fun updateById(user: User): User? = transaction {
+    fun update(user: User): User? = transaction {
         UserEntity.findById(user.id)?.apply {
             this.name = user.name
             this.email = user.email

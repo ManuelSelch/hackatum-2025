@@ -3,7 +3,7 @@
   "info": {
     "title": "Hackatum 2025 API",
     "version": "1.0.0",
-    "description": "Authentication API with JWT support"
+    "description": "API for authentication, groups and pantry management."
   },
   "servers": [
     {
@@ -12,25 +12,6 @@
     }
   ],
   "paths": {
-    "/": {
-      "get": {
-        "summary": "Health check",
-        "description": "Simple endpoint to verify the server is running",
-        "responses": {
-          "200": {
-            "description": "Server is running",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "example": "Ktor: Hello, World!"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/auth/register": {
       "post": {
         "summary": "Register a new user",
@@ -161,137 +142,81 @@
       }
     },
     "/groups": {
+      "get": {
+        "summary": "List groups for current user",
+        "tags": ["groups"],
+        "security": [ { "bearerAuth": [] } ],
+        "responses": {
+          "200": {
+            "description": "List of groups wrapped in a response object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GroupListResponse" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      }
+    },
+    "/groups/create": {
       "post": {
         "summary": "Create a group",
         "tags": ["groups"],
         "security": [ { "bearerAuth": [] } ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateGroupRequest" }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupCreateRequest" } } }
         },
         "responses": {
-          "201": {
-            "description": "Group created",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/GroupResponse" }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid JSON body or missing name",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
-          },
-          "409": {
-            "description": "Group name already exists",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
-          },
-          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-        }
-      },
-      "get": {
-        "summary": "List groups",
-        "tags": ["groups"],
-        "security": [ { "bearerAuth": [] } ],
-        "parameters": [
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 500 }, "required": false, "description": "Max items to return (default 100)" },
-          { "name": "offset", "in": "query", "schema": { "type": "integer", "minimum": 0 }, "required": false, "description": "Items to skip (default 0)" }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of groups",
-            "content": {
-              "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/GroupResponse" } }
-              }
-            }
-          },
+          "201": { "description": "Group created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupResponse" } } } },
+          "400": { "description": "Missing or invalid name", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
           "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
         }
       }
     },
-    "/groups/{id}": {
-      "get": {
-        "summary": "Get group with members",
-        "tags": ["groups"],
-        "security": [ { "bearerAuth": [] } ],
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" }
-        ],
-        "responses": {
-          "200": { "description": "Group found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupWithMembersResponse" } } } },
-          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-        }
-      },
-      "delete": {
-        "summary": "Delete group",
-        "tags": ["groups"],
-        "security": [ { "bearerAuth": [] } ],
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" }
-        ],
-        "responses": {
-          "204": { "description": "Deleted successfully" },
-          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-        }
-      }
-    },
-    "/groups/{id}/members": {
-      "get": {
-        "summary": "List group members",
-        "tags": ["groups"],
-        "security": [ { "bearerAuth": [] } ],
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 500 }, "required": false, "description": "Max items to return (default 100)" },
-          { "name": "offset", "in": "query", "schema": { "type": "integer", "minimum": 0 }, "required": false, "description": "Items to skip (default 0)" }
-        ],
-        "responses": {
-          "200": { "description": "List of members", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/MemberResponse" } } } } },
-          "400": { "description": "Invalid group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
-        }
-      },
+    "/groups/join": {
       "post": {
-        "summary": "Add member to group",
+        "summary": "Join a group",
         "tags": ["groups"],
         "security": [ { "bearerAuth": [] } ],
-        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" } ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AddMemberRequest" } } }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupJoinRequest" } } }
         },
         "responses": {
-          "201": { "description": "Membership created" },
-          "200": { "description": "Already a member (idempotent)" },
-          "400": { "description": "Invalid JSON body or group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Group or user not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "200": { "description": "Joined group", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GroupResponse" } } } },
+          "400": { "description": "Invalid request or group id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
           "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
         }
       }
     },
-    "/groups/{id}/members/{userId}": {
-      "delete": {
-        "summary": "Remove member from group",
-        "tags": ["groups"],
+    "/pantry": {
+      "post": {
+        "summary": "Create a pantry item",
+        "tags": ["pantry"],
+        "security": [ { "bearerAuth": [] } ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PantryItemCreateRequest" } } }
+        },
+        "responses": {
+          "200": { "description": "Item created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PantryItemResponse" } } } },
+          "400": { "description": "Invalid body", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+        }
+      },
+      "get": {
+        "summary": "List pantry items",
+        "tags": ["pantry"],
         "security": [ { "bearerAuth": [] } ],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID" },
-          { "name": "userId", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "User ID" }
+          { "name": "groupID", "in": "query", "required": true, "schema": { "type": "integer", "format": "int64" }, "description": "Group ID whose pantry to list" },
+          { "name": "outOfStock", "in": "query", "required": false, "schema": { "type": "boolean", "default": false }, "description": "If true, return only out-of-stock items" }
         ],
         "responses": {
-          "204": { "description": "Membership removed" },
-          "400": { "description": "Invalid group id or user id", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "404": { "description": "Membership not found or group not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "200": { "description": "List of pantry items", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/PantryItemResponse" } } } } },
+          "400": { "description": "Missing or invalid groupID", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
           "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
         }
       }
@@ -299,45 +224,28 @@
   },
   "components": {
     "schemas": {
-      "CreateGroupRequest": {
+      "GroupCreateRequest": {
         "type": "object",
         "required": ["name"],
-        "properties": {
-          "name": { "type": "string", "description": "Group name (unique)", "example": "Team Alpha" }
-        }
+        "properties": { "name": { "type": "string", "description": "Group name (unique)", "example": "Team Alpha" } }
+      },
+      "GroupJoinRequest": {
+        "type": "object",
+        "required": ["groupID"],
+        "properties": { "groupID": { "type": "integer", "format": "int64", "example": 1 } }
       },
       "GroupResponse": {
         "type": "object",
         "properties": {
           "id": { "type": "integer", "format": "int64", "example": 1 },
           "name": { "type": "string", "example": "Team Alpha" },
-          "createdAt": { "type": "string", "format": "date-time", "nullable": true, "example": "2025-01-15T10:30:00Z" }
+          "members": { "type": "array", "items": { "$ref": "#/components/schemas/UserResponse" } },
+          "expenses": { "type": "array", "items": { "$ref": "#/components/schemas/ExpenseResponse" } }
         }
       },
-      "MemberResponse": {
+      "GroupListResponse": {
         "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64", "example": 42 },
-          "name": { "type": "string", "example": "Alice" },
-          "email": { "type": "string", "format": "email", "example": "alice@example.com" },
-          "createdAt": { "type": "string", "format": "date-time", "nullable": true }
-        }
-      },
-      "GroupWithMembersResponse": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "name": { "type": "string" },
-          "members": { "type": "array", "items": { "$ref": "#/components/schemas/MemberResponse" } },
-          "createdAt": { "type": "string", "format": "date-time", "nullable": true }
-        }
-      },
-      "AddMemberRequest": {
-        "type": "object",
-        "required": ["userId"],
-        "properties": {
-          "userId": { "type": "integer", "format": "int64", "example": 42 }
-        }
+        "properties": { "groups": { "type": "array", "items": { "$ref": "#/components/schemas/GroupResponse" } } }
       },
       "RegisterRequest": {
         "type": "object",
@@ -407,13 +315,7 @@
             "description": "User's email address",
             "example": "john.doe@example.com"
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "Timestamp when the user was created",
-            "example": "2025-01-15T10:30:00Z"
-          }
+          "createdAt": { "type": "string", "format": "date-time", "nullable": true }
         }
       },
       "LoginResponse": {
@@ -432,6 +334,40 @@
           "user": {
             "$ref": "#/components/schemas/UserResponse"
           }
+        }
+      },
+      "ExpenseResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "groupId": { "type": "integer", "format": "int64" },
+          "payer": { "$ref": "#/components/schemas/UserResponse" },
+          "amount": { "type": "number", "format": "double" },
+          "description": { "type": "string" },
+          "borrowers": { "type": "array", "items": { "$ref": "#/components/schemas/UserResponse" } }
+        }
+      },
+      "PantryItemCreateRequest": {
+        "type": "object",
+        "required": ["groupId", "name", "quantity", "category", "unit", "minimumQuantity"],
+        "properties": {
+          "groupId": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "quantity": { "type": "integer" },
+          "category": { "type": "string" },
+          "unit": { "type": "string" },
+          "minimumQuantity": { "type": "integer" }
+        }
+      },
+      "PantryItemResponse": {
+        "type": "object",
+        "properties": {
+          "groupId": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "quantity": { "type": "integer" },
+          "category": { "type": "string" },
+          "unit": { "type": "string" },
+          "minimumQuantity": { "type": "integer" }
         }
       },
       "ErrorResponse": {

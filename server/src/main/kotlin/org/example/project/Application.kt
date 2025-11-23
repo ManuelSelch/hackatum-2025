@@ -16,6 +16,7 @@ import org.example.project.dao.GroupDao
 import org.example.project.dao.PantryItemDao
 import org.example.project.dao.UserDao
 import org.example.project.plugins.configureDatabase
+import org.example.project.plugins.configureDocumentation
 import org.example.project.plugins.configureSerialization
 import org.example.project.plugins.configureTestDatabase
 import org.example.project.routes.groupRoutes
@@ -26,6 +27,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module(testing: Boolean = false) {
     if (testing) configureTestDatabase() else configureDatabase()
     configureSerialization()
+    configureDocumentation()
 
     val jwtCfg = JwtConfig(
         secret = environment.config.property("jwt.secret").getString(),

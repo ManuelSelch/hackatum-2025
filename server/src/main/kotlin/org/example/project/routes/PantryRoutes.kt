@@ -8,15 +8,17 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
-import models.PantryItemCreateRequest
+import models.PantryItemRequest
 import org.example.project.dao.PantryItemDao
+import org.example.project.domain.models.PantryItem
 import org.example.project.domain.models.toResponse
+import org.example.project.services.PantryItemService
 
 fun Route.pantryRoutes(pantryDao: PantryItemDao) {
     authenticate("auth-jwt") {
         route("/pantry") {
             post("") {
-                val request = call.receive<PantryItemCreateRequest>();
+                val request = call.receive<PantryItemRequest>();
 
                 val item = pantryDao.create(
                     request.groupId,
@@ -38,11 +40,54 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
                     return@get
                 }
 
-                val items = pantryDao.getPantryItemsByGroupID(groupID)
+                val outOfStock = call.parameters["outOfStock"]?.toBooleanStrictOrNull() ?: false
+                val items = if (outOfStock) {
+                    pantryDao.getPantryItemsByGroupID(groupID)
+                } else {
+                    PantryItemService(pantryDao).getPantryItemsOutOfStock(groupID)
+                }
 
                 items
                     .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
                     .onSuccess { call.respond(HttpStatusCode.OK, it.map { item -> item.toResponse()}) }
+            }
+
+            post("/update") {
+                val request = call.receive<PantryItemRequest>()
+
+                val result = pantryDao.update(
+                    PantryItem(
+                        groupID = request.groupId,
+                        name = request.name,
+                        unit = request.unit,
+                        quantity = request.quantity,
+                        minimumQuantity = request.minimumQuantity,
+                        category = request.category
+                    )
+                )
+
+                result
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
+            }
+
+            post("/delete") {
+                val request = call.receive<PantryItemRequest>()
+
+                val result = pantryDao.delete(
+                    PantryItem(
+                        groupID = request.groupId,
+                        name = request.name,
+                        unit = request.unit,
+                        quantity = request.quantity,
+                        minimumQuantity = request.minimumQuantity,
+                        category = request.category
+                    )
+                )
+
+                result
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
+                    .onSuccess { call.respond(HttpStatusCode.OK) }
             }
         }
     }
