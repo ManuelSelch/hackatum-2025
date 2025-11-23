@@ -7,6 +7,8 @@ struct Demo: View {
     
     var body: some View {
         VStack {
+            Text(scannedString)
+                
             ScannerView(scannedString: $scannedString)
                 .edgesIgnoringSafeArea(.all)
         }
@@ -29,11 +31,13 @@ struct ScannerView: UIViewControllerRepresentable {
         
         captureSession.addInput(videoInput)
         
-        let videoOutput = AVCaptureVideoDataOutput()
+        // ---- FIX: Use AVCaptureMetadataOutput instead of VideoDataOutput ----
+        let metadataOutput = AVCaptureMetadataOutput()
         
-        if captureSession.canAddOutput(videoOutput) {
-            videoOutput.setSampleBufferDelegate(context.coordinator, queue: DispatchQueue(label: "videoQueue"))
-            captureSession.addOutput(videoOutput)
+        if captureSession.canAddOutput(metadataOutput) {
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.setMetadataObjectsDelegate(context.coordinator, queue: DispatchQueue.main)
+            metadataOutput.metadataObjectTypes = [.qr]
         }
         
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
@@ -49,12 +53,25 @@ struct ScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(scannerView: self)
     }
     
-    class Coordinator: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate { }
-}
-
-#Preview {
-    Demo()
+    class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+        
+        var parent: ScannerView
+        
+        init(scannerView: ScannerView) {
+            self.parent = scannerView
+        }
+        
+        func metadataOutput(_ output: AVCaptureMetadataOutput,
+                            didOutput metadataObjects: [AVMetadataObject],
+                            from connection: AVCaptureConnection) {
+            
+            if let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
+               let value = object.stringValue {
+                parent.scannedString = value
+            }
+        }
+    }
 }
