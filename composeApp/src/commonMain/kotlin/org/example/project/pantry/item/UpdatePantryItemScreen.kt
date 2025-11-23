@@ -7,20 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.example.project.theme.AppColors.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pantry.PantryItem
 
 @Composable
 @Preview
-fun EditPantryItemScreen(
-   // item: PantryItem,
-    //onUpdate: (PantryItem) -> Unit
+fun UpdatePantryItemScreen(
+    item: PantryItem,
+    onUpdate: (PantryItem) -> Unit
 ) {
     AppTheme{
         Surface(Modifier.background(color = MaterialTheme.colorScheme.background)) {
             PantryItemForm(
-                initialItem = null,
+                initialItem = item,
                 buttonText = "Update",
                 titleText = "Update Pantry Item",
-                onSubmit = { Unit }
+                onSubmit = onUpdate,
             )
         }
     }

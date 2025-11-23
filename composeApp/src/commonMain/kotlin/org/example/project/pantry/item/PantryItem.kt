@@ -23,7 +23,14 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 
-fun PantryItemCard(name: String, unit: String?, quantity: Double, category: String?, minimumQuantity: Int?) {
+fun PantryItemCard(
+    name: String,
+    unit: String?,
+    quantity: Double,
+    category: String?,
+    minimumQuantity: Int?,
+    clickable: clickable
+) {
     Column(
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
@@ -57,7 +64,7 @@ fun PantryItemCard(name: String, unit: String?, quantity: Double, category: Stri
 @Composable
 fun PantryItemCardPreview(){
     AppTheme{
-        PantryItemCard("Toilet Paper", "Rolls", 9.0, "misc", minimumQuantity = 3)
+        PantryItemCard("Toilet Paper", "Rolls", 9.0, "misc", minimumQuantity = 3, Modifier.clickable(updateTapped))
     }
 
 }

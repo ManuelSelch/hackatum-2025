@@ -7,19 +7,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.example.project.theme.AppColors.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pantry.PantryItem
+import pantry.ShelfType
 
 @Composable
 @Preview
 fun AddPantryItemScreen(
-    //onCreate: (PantryItem) -> Unit
+    onCreate: (PantryItem) -> Unit
 ) {
     AppTheme{
         Surface (Modifier.background(color = MaterialTheme.colorScheme.background)){
             PantryItemForm(
-                initialItem = null,
+                initialItem = PantryItem(
+                    name = "",
+                    unit = "",
+                    quantity = 0.0,
+                    category = ShelfType.Miscellaneous,
+                    minimumQuantity = 0
+                ),
                 buttonText = "Create",
                 titleText = "New Pantry Item",
-                onSubmit = { Unit },
+                onSubmit = onCreate,
             )
         }
     }

@@ -1,6 +1,7 @@
 package home
 
 import common.Store
+import common.UserService
 import kotlinx.coroutines.launch
 import models.GroupResponse
 
@@ -39,7 +40,7 @@ sealed class HomeEffect {
     data object NavigateToPantry: HomeEffect()
 }
 
-class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
+class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
     private val api = HomeAPI()
 
     override fun reduce(state: HomeState, action: HomeAction): HomeState {
@@ -48,7 +49,10 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
         return when (action) {
             is HomeAction.CreateHouseHoldTapped -> state.copy(route = HomeRoute.CreateHouseHold)
             is HomeAction.CreateHouseHold -> createHousehold(state, action.name)
-            is HomeAction.GroupSelected -> state.copy(current = action.group)
+            is HomeAction.GroupSelected -> {
+                user.currentGroup = action.group.id
+                state.copy(current = action.group)
+            }
 
             is HomeAction.HouseholdCreated -> state.copy(loading = false, error = null, route = HomeRoute.Dashboard)
             is HomeAction.Failed -> state.copy(loading = false, error = action.error)

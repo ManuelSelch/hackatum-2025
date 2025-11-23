@@ -3,29 +3,11 @@ package org.example.project.pantry.item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,25 +22,25 @@ import org.example.project.theme.icons.Arrow_drop_down
 import org.example.project.theme.icons.Drink
 import org.example.project.theme.icons.Food
 import org.example.project.theme.icons.Misc
+import pantry.PantryItem
+import pantry.ShelfType
 
 @Composable
 fun PantryItemForm(
-    initialItem: PantryItem? = null,
+    initialItem: PantryItem,
     buttonText: String,
     titleText: String,
     onSubmit: (PantryItem) -> Unit
 )
 {
-    var name by remember { mutableStateOf(initialItem?.name ?: "") }
-    var unit by remember { mutableStateOf(initialItem?.unit ?: "") }
-    var quantityText by remember { mutableStateOf(initialItem?.quantity?.toString() ?: "") }
-    var minimumQuantityText by remember { mutableStateOf(initialItem?.minimumQuantity?.toString() ?: "") }
-    var category by remember { mutableStateOf(initialItem?.category ?: "") }
+    var item by remember { mutableStateOf(initialItem) }
 
-    val categories = listOf("Food", "Drink", "Miscellaneous")
+    val categories = ShelfType.entries
 
     // Validation
-    val isNameValid = name.trim().length >= 3
+    var quantityText = item.quantity.toString()
+    var minimumQuantityText = item.quantity.toString()
+    val isNameValid = item.name.trim().length >= 3
     val quantity = quantityText.toDoubleOrNull() ?: -1.0
     val isQuantityValid = quantity >= 0.0
     val minimumQuantity = minimumQuantityText.toDoubleOrNull() ?: 1.0
@@ -72,23 +54,24 @@ fun PantryItemForm(
     )
     {
         Text(titleText, color = MaterialTheme.colorScheme.primary, fontSize = TEXT_L.sp)
-        Column(Modifier.padding(0.dp, 32.dp).border(2.dp,brush = AppTheme.brushes.primaryGradient, shape = RoundedCornerShape(0.dp)), verticalArrangement = Arrangement.spacedBy(12.dp),) {
+        Column(Modifier.padding(0.dp, 32.dp).border(2.dp,brush = AppTheme.brushes.primaryGradient, shape = RoundedCornerShape(0.dp)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
 
             TextField(
-                value = name,
-                onValueChange = { name = it },
-                label = {  Row{Text("Name"); Text("*", color = MaterialTheme.colorScheme.error)} },
-                isError = !isNameValid && name.isNotEmpty(),
+                value = item.name,
+                onValueChange = { item.name = it },
+                label = {  Row{
+                    Text("Name"); Text("*", color = MaterialTheme.colorScheme.error)} },
+                isError = !isNameValid && item.name.isNotEmpty(),
                 singleLine = true
             )
-            if (!isNameValid && name.isNotEmpty()) {
+            if (!isNameValid && item.name.isNotEmpty()) {
                 Text("Name must be at least 3 characters", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
             }
 
             TextField(
-                value = unit,
-                onValueChange = { unit = it },
+                value = item.unit ?: "",
+                onValueChange = { item.unit = it },
                 label = { Text("Unit") },
                 singleLine = true
             )
@@ -122,14 +105,14 @@ fun PantryItemForm(
             var expanded by remember { mutableStateOf(false) }
             Box {
                 TextField(
-                    value = category,
+                    value = item.category.toString(),
                     onValueChange = { },
                     label = { Text("Category") },
                     readOnly = true,
                     trailingIcon = {
-                        Icon(
-                            Arrow_drop_down, contentDescription = null,
-                            Modifier.clickable { expanded = true })
+                    Icon(
+                        Arrow_drop_down, contentDescription = null,
+                        Modifier.clickable { expanded = true })
                     }
                 )
                 DropdownMenu(
@@ -140,13 +123,13 @@ fun PantryItemForm(
                     categories.forEach { cat ->
                         DropdownMenuItem(
                             onClick = {
-                                category = cat
+                                item.category = cat
                                 expanded = false
                             },
-                            text = { Text(cat) },
+                            text = { Text(cat.toString()) },
                             trailingIcon = {
                                 Icon(
-                                    if (cat == "food") Food else if (cat == "drink") Drink else Misc,
+                                    if (cat == ShelfType.Food) Food else if (cat == ShelfType.Drinks) Drink else Misc,
                                     contentDescription = "food_icon",
                                     Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.primary
@@ -168,16 +151,7 @@ fun PantryItemForm(
                 .clip(ButtonDefaults.shape)
                 .background(AppTheme.brushes.primaryGradient),
             onClick = {
-                val minQty = minimumQuantityText.toIntOrNull()
-                onSubmit(
-                    PantryItem(
-                        name = name.trim(),
-                        unit = unit.ifBlank { null },
-                        quantity = quantity,
-                        category = category.ifBlank { null },
-                        minimumQuantity = minQty
-                    )
-                )
+                onSubmit(item)
             },
             enabled = isFormValid,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
