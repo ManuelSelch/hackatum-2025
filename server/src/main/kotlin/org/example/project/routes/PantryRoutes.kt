@@ -21,6 +21,12 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
             post("") {
                 val request = call.receive<PantryItemDTO>();
 
+                if (request.groupId == 0L || request.name.isBlank() || request.unit.isBlank() || request.quantity <= 0 || request.minimumQuantity <= 0 || request.category.isBlank())
+                    return@post call.respond(HttpStatusCode.BadRequest, "Missing required fields: groupId, name, unit, quantity, minimumQuantity, category")
+
+                if (pantryDao.getPantryItem(request.groupId, request.name) != null)
+                    return@post call.respond(HttpStatusCode.BadRequest, "Item already exists in the pantry")
+
                 val item = pantryDao.create(
                     request.groupId,
                     request.name,
