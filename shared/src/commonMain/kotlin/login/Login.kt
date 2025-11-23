@@ -1,6 +1,10 @@
 package login
 
 import common.Store
+import home.HomeAction
+import home.HomeEffect
+import home.HomeRoute
+import home.HomeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -8,9 +12,13 @@ data class LoginState(
     val isLoading: Boolean = false,
     var route: LoginRoute = LoginRoute.Login,
     var error: String? = null,
+
+    // profile
+    val username: String? = null,
+    val email: String? = null
 )
 
-enum class LoginRoute { Login, Register, }
+enum class LoginRoute { Login, Register, Settings}
 
 sealed class LoginAction {
     data class Login(val email: String, val password: String): LoginAction()
@@ -19,8 +27,11 @@ sealed class LoginAction {
     data object SwitchToRegister : LoginAction()
     data object SwitchToLogin : LoginAction()
 
-    data object AuthSuccess : LoginAction()
+    data class AuthSuccess(val username: String, val email: String) : LoginAction()
     data class AuthFailed(val error: String): LoginAction()
+    data object Logout: LoginAction()
+    data class Update(val username: String, val email: String): LoginAction()
+    data object ShowSettings : LoginAction()
 }
 
 sealed class LoginEffect {
@@ -38,8 +49,12 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
             is LoginAction.SwitchToLogin -> state.copy(route = LoginRoute.Login)
             is LoginAction.SwitchToRegister -> state.copy(route = LoginRoute.Register)
 
-            is LoginAction.AuthSuccess -> state.copy(isLoading = false, error = null)
+            is LoginAction.AuthSuccess -> state.copy(isLoading = false, error = null, username = action.username, email = action.email)
             is LoginAction.AuthFailed -> state.copy(isLoading = false, error = action.error)
+
+            is LoginAction.ShowSettings -> state.copy(route = LoginRoute.Settings)
+            is LoginAction.Logout -> logout(state)
+            is LoginAction.Update -> updateProfile(state, action.username, action.email)
         }
     }
 
@@ -47,7 +62,7 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         scope.launch {
             api.login(email, password)
                 .onSuccess {
-                    dispatch(LoginAction.AuthSuccess)
+                    dispatch(LoginAction.AuthSuccess(it.user.name, it.user.email))
                     emit(LoginEffect.NavigateToHome)
                 }
                 .onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
@@ -60,12 +75,26 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         scope.launch {
             api.register(username, email,password)
                 .onSuccess {
-                    dispatch(LoginAction.AuthSuccess)
+                    dispatch(LoginAction.AuthSuccess(username, email))
                     emit(LoginEffect.NavigateToHome)
                 }
                 .onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
         }
 
         return state.copy(isLoading = true)
+    }
+
+    fun logout(state: LoginState): LoginState {
+        api.clearToken()
+        return state.copy(route = LoginRoute.Login)
+    }
+
+    fun updateProfile(state: LoginState, username: String, email: String): LoginState {
+        scope.launch {
+            val success = api.update(username, email)
+            if(success)
+                emit(LoginEffect.NavigateToHome)
+        }
+        return state
     }
 }

@@ -34,10 +34,12 @@ sealed class HomeAction {
     data object RefreshTapped: HomeAction()
 
     data object PantryTapped: HomeAction()
+    data object SettingsTapped: HomeAction()
 }
 
 sealed class HomeEffect {
     data object NavigateToPantry: HomeEffect()
+    data object NavigateToSettings: HomeEffect()
 }
 
 class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
@@ -69,6 +71,7 @@ class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>
             is HomeAction.BackTapped -> state.copy(route = HomeRoute.Dashboard)
             is HomeAction.RefreshTapped -> { fetchHouseholds(); state}
             is HomeAction.PantryTapped -> { emit(HomeEffect.NavigateToPantry); state}
+            is HomeAction.SettingsTapped -> { emit(HomeEffect.NavigateToSettings); state}
         }
     }
 

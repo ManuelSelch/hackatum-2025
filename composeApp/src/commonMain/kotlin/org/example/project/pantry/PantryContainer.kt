@@ -9,13 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.example.project.pantry.item.AddPantryItemScreen
 import org.example.project.pantry.item.UpdatePantryItemScreen
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import pantry.PantryAction.*
 import pantry.PantryRoute
 import pantry.PantryStore
 import pantry.ShelfType
 
 @Composable
-
 fun PantryContainer(store: PantryStore) {
     val state by store.state.collectAsState()
 
@@ -25,13 +25,15 @@ fun PantryContainer(store: PantryStore) {
                 shelfType = route.type,
                 createTapped = {store.dispatch(GoToCreatePantryItem)},
                 updateTapped = {store.dispatch(GoToUpdatePantryItem)},
-                onBack = { store.dispatch(GoToView) }
+                onBack = { store.dispatch(GoToView) },
+                pantryItems = state.pantryItems,
             )
 
             is PantryRoute.View -> PantryView(
                 { store.dispatch(GoToShelf(ShelfType.Food)) },
                 { store.dispatch(GoToShelf(ShelfType.Drinks)) },
-                { store.dispatch(GoToShelf(ShelfType.Miscellaneous)) }
+                { store.dispatch(GoToShelf(ShelfType.Miscellaneous)) },
+                pantryItems = state.pantryItems,
             )
 
             is PantryRoute.Create -> AddPantryItemScreen(

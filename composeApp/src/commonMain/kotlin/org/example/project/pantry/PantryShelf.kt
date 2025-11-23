@@ -1,7 +1,6 @@
 package org.example.project.pantry
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,6 +14,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import models.PantryItemDTO
 import org.example.project.pantry.item.PantryItemCard
 import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.AppTheme
@@ -28,12 +28,13 @@ fun PantryShelf(
     shelfType: ShelfType,
     onBack: () -> Unit,
     updateTapped: () -> Unit,
-    createTapped: () -> Unit
+    createTapped: () -> Unit,
+    pantryItems: List<PantryItemDTO>,
 )
 {
     AppTheme{
         Surface(Modifier .background(color = MaterialTheme.colorScheme.background)){
-            var items by remember { mutableStateOf(listOf("Example 1", "Example 2")) }
+            var items by remember { mutableStateOf(pantryItems) }
 
             Column(
                 modifier = Modifier
@@ -51,7 +52,7 @@ fun PantryShelf(
                     Spacer (Modifier.width(0.dp).height(24.dp))
 
                     Text(
-                        text = "${shelfType} Shelf",
+                        text = "$shelfType Shelf",
                         Modifier.align(Alignment.CenterHorizontally),
                         style = MaterialTheme.typography.headlineMedium,
 
@@ -67,13 +68,13 @@ fun PantryShelf(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(items) { name: String ->
+                    items(items) { item: PantryItemDTO ->
                         PantryItemCard(
-                            name,
-                            unit = null,
-                            quantity = 3.0,
-                            category = null,
-                            minimumQuantity = null,
+                            item.name,
+                            item.unit,
+                            item.quantity,
+                            item.category,
+                            item.minimumQuantity,
                             updateTapped
                         )
                     }
@@ -87,7 +88,6 @@ fun PantryShelf(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     onClick = {
                         createTapped()
-                        items = items + "New Item ${items.size + 1}"
                     }
                 ) {
                     Text("Add Pantry Item", color = MaterialTheme.colorScheme.onPrimary)

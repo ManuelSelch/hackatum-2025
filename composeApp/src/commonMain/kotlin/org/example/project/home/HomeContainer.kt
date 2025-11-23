@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import home.HomeAction
 import home.HomeRoute
 import home.HomeStore
+import org.example.project.login.SettingsView
 import org.example.project.theme.AppColors.AppTheme
 
 @Composable
@@ -48,6 +49,7 @@ fun HomeContainer(store: HomeStore ) {
                         { store.dispatch((HomeAction.InviteTapped)) },
                         { store.dispatch(HomeAction.RefreshTapped) },
                         { store.dispatch(HomeAction.PantryTapped) },
+                        { store.dispatch(HomeAction.SettingsTapped) },
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(

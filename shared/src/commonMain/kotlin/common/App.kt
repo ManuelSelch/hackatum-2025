@@ -3,6 +3,7 @@ package common
 import home.HomeEffect
 import home.HomeStore
 import kotlinx.coroutines.launch
+import login.LoginAction
 import login.LoginEffect
 import login.LoginStore
 import pantry.PantryStore
@@ -43,6 +44,10 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
         home.listen {
             when (it) {
                 is HomeEffect.NavigateToPantry -> dispatch(AppAction.Navigate(AppRoute.Pantry))
+                is HomeEffect.NavigateToSettings -> {
+                    dispatch(AppAction.Navigate(AppRoute.Login))
+                    login.dispatch(LoginAction.ShowSettings)
+                }
             }
         }
     }

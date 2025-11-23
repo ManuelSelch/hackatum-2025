@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import models.PantryItemDTO
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_L
 import org.example.project.theme.TEXT_REG
@@ -22,15 +23,15 @@ import org.example.project.theme.icons.Arrow_drop_down
 import org.example.project.theme.icons.Drink
 import org.example.project.theme.icons.Food
 import org.example.project.theme.icons.Misc
-import pantry.PantryItem
+
 import pantry.ShelfType
 
 @Composable
 fun PantryItemForm(
-    initialItem: PantryItem,
+    initialItem: PantryItemDTO,
     buttonText: String,
     titleText: String,
-    onSubmit: (PantryItem) -> Unit
+    onSubmit: (PantryItemDTO) -> Unit
 )
 {
     var item by remember { mutableStateOf(initialItem) }
@@ -70,7 +71,7 @@ fun PantryItemForm(
             }
 
             TextField(
-                value = item.unit ?: "",
+                value = item.unit,
                 onValueChange = { item.unit = it },
                 label = { Text("Unit") },
                 singleLine = true
@@ -123,7 +124,7 @@ fun PantryItemForm(
                     categories.forEach { cat ->
                         DropdownMenuItem(
                             onClick = {
-                                item.category = cat
+                                item.category = cat.toString()
                                 expanded = false
                             },
                             text = { Text(cat.toString()) },

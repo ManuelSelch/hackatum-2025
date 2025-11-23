@@ -7,6 +7,11 @@ struct Demo: View {
             Image(systemName: "person")
                 .font(.title)
                 .bold()
+            Image(systemName: "gear")
+                .font(.title)
+                .bold()
+            
+                .foregroundColor(.red)
             Text("test")
         }
         .padding()

@@ -5,6 +5,7 @@ import models.GroupCreateRequest
 import models.GroupJoinRequest
 import models.GroupListResponse
 import models.GroupDTO
+import models.UserDTO
 
 class HomeAPI: API() {
     suspend fun create(name: String): Result<GroupDTO> {
