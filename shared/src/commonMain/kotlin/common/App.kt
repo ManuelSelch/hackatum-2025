@@ -1,5 +1,6 @@
 package common
 
+import home.HomeEffect
 import home.HomeStore
 import kotlinx.coroutines.launch
 import login.LoginEffect
@@ -7,7 +8,7 @@ import login.LoginStore
 import pantry.PantryStore
 
 data class AppState(
-    val route: AppRoute = AppRoute.Pantry,
+    val route: AppRoute = AppRoute.Login,
 )
 
 sealed class AppRoute {
@@ -32,9 +33,17 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
 
     init {
         scope.launch {
-            login.effects.collect { effect ->
-                when (effect) {
+            login.effects.collect {
+                when (it) {
                     is LoginEffect.NavigateToHome -> dispatch(AppAction.Navigate(AppRoute.Home))
+                }
+            }
+        }
+
+        scope.launch {
+            home.effects.collect {
+                when (it) {
+                    is HomeEffect.NavigateToPantry -> dispatch(AppAction.Navigate(AppRoute.Pantry))
                 }
             }
         }
@@ -42,6 +51,8 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
 
 
     override fun reduce(state: AppState, action: AppAction): AppState {
+        println(action)
+
         return when(action) {
             is AppAction.Navigate -> state.copy(route = action.route)
         }
