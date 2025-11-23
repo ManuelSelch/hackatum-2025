@@ -28,66 +28,65 @@ fun PantryShelf(
     onBack: () -> Unit,
     updateTapped: (PantryItemDTO) -> Unit,
     createTapped: () -> Unit,
-    pantryItems: List<PantryItemDTO>,
+    items: List<PantryItemDTO>,
 )
 {
-    val items = pantryItems
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+
+
+    )
+    {
+        Column(
+            Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            TextButton(onClick = onBack) { Row(verticalAlignment = Alignment.CenterVertically){Icon(Arrow_drop_down, contentDescription = "back_to_pantry",  Modifier.rotate(90f).size(32.dp), tint = MaterialTheme.colorScheme.primary); Text("Back", fontSize = TEXT_L.sp) }}
+
+            Spacer (Modifier.width(0.dp).height(24.dp))
+
+            Text(
+                text = "$shelfType Shelf",
+                Modifier.align(Alignment.CenterHorizontally),
+                style = MaterialTheme.typography.headlineMedium,
 
 
             )
-            {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    TextButton(onClick = onBack) { Row(verticalAlignment = Alignment.CenterVertically){Icon(Arrow_drop_down, contentDescription = "back_to_pantry",  Modifier.rotate(90f).size(32.dp), tint = MaterialTheme.colorScheme.primary); Text("Back", fontSize = TEXT_L.sp) }}
+        }
+        Spacer(Modifier.height(12.dp))
 
-                    Spacer (Modifier.width(0.dp).height(24.dp))
-
-                    Text(
-                        text = "$shelfType Shelf",
-                        Modifier.align(Alignment.CenterHorizontally),
-                        style = MaterialTheme.typography.headlineMedium,
-
-
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-
-                // Grid of pantry items
-                LazyVerticalGrid(
-                    modifier = Modifier.weight(1f),
-                    columns = GridCells.Adaptive(minSize = 90.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(items) { item: PantryItemDTO ->
-                        PantryItemCard(
-                            item.name,
-                            item.unit,
-                            item.quantity,
-                            item.category,
-                            item.minimumQuantity
-                        ) { updateTapped(item) }
-                    }
-                }
-
-                Spacer(Modifier.height(12.dp))
-
-                // Add Item Button
-                Button(
-                    modifier = Modifier.wrapContentWidth().clip(ButtonDefaults.shape).background(brush = AppTheme.brushes.primaryGradient).align(Alignment.CenterHorizontally),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    onClick = {
-                        createTapped()
-                    }
-                ) {
-                    Text("Add Pantry Item", color = MaterialTheme.colorScheme.onPrimary)
-                }
+        // Grid of pantry items
+        LazyVerticalGrid(
+            modifier = Modifier.weight(1f),
+            columns = GridCells.Adaptive(minSize = 90.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(items) { item: PantryItemDTO ->
+                PantryItemCard(
+                    item.name,
+                    item.unit,
+                    item.quantity,
+                    item.category,
+                    item.minimumQuantity
+                ) { updateTapped(item) }
             }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        // Add Item Button
+        Button(
+            modifier = Modifier.wrapContentWidth().clip(ButtonDefaults.shape).background(brush = AppTheme.brushes.primaryGradient).align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            onClick = {
+                createTapped()
+            }
+        ) {
+            Text("Add Pantry Item", color = MaterialTheme.colorScheme.onPrimary)
+        }
+    }
 }
 
 

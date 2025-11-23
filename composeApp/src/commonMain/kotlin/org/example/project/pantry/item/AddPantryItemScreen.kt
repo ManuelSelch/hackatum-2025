@@ -14,6 +14,7 @@ import pantry.ShelfType
 @Composable
 @Preview
 fun AddPantryItemScreen(
+    backToShelf: () -> Unit,
     onCreate: (PantryItemDTO) -> Unit
 ) {
     AppTheme{
@@ -30,6 +31,7 @@ fun AddPantryItemScreen(
                 buttonText = "Create",
                 titleText = "New Pantry Item",
                 onSubmit = onCreate,
+                back = backToShelf,
             )
         }
     }

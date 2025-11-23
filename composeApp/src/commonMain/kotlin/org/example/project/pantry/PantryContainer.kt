@@ -25,7 +25,7 @@ fun PantryContainer(store: PantryStore) {
                 createTapped = {store.dispatch(GoToCreatePantryItem)},
                 updateTapped = {store.dispatch(GoToUpdatePantryItem(it))},
                 onBack = { store.dispatch(GoToView) },
-                pantryItems = state.pantryItems,
+                items = state.pantryItems,
             )
 
             is PantryRoute.View -> PantryView(
@@ -37,9 +37,11 @@ fun PantryContainer(store: PantryStore) {
             )
 
             is PantryRoute.Create -> AddPantryItemScreen(
+                backToShelf = {store.dispatch(GoToShelf(ShelfType.Food))},
                 onCreate = { store.dispatch(CreatePantryItem(it)) },
             )
             is PantryRoute.Update -> UpdatePantryItemScreen(
+                backToShelf = {store.dispatch(GoToShelf(ShelfType.Food))},
                 item = route.item,
                 onUpdate = { store.dispatch(UpdatePantryItem(it)) },
             )

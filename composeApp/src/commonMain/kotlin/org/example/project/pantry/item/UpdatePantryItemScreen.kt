@@ -12,6 +12,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun UpdatePantryItemScreen(
+    backToShelf: () -> Unit,
     item: PantryItemDTO,
     onUpdate: (PantryItemDTO) -> Unit
 ) {
@@ -22,6 +23,7 @@ fun UpdatePantryItemScreen(
                 buttonText = "Update",
                 titleText = "Update Pantry Item",
                 onSubmit = onUpdate,
+                back = backToShelf
             )
         }
     }

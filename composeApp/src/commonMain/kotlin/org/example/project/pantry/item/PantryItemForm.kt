@@ -1,10 +1,8 @@
 package org.example.project.pantry.item
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,11 +17,7 @@ import models.PantryItemDTO
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_L
 import org.example.project.theme.TEXT_REG
-import org.example.project.theme.icons.Arrow_drop_down
-import org.example.project.theme.icons.Drink
-import org.example.project.theme.icons.Food
-import org.example.project.theme.icons.Misc
-
+import org.example.project.theme.icons.*
 import pantry.ShelfType
 
 @Composable
@@ -31,7 +25,8 @@ fun PantryItemForm(
     initialItem: PantryItemDTO,
     buttonText: String,
     titleText: String,
-    onSubmit: (PantryItemDTO) -> Unit
+    onSubmit: (PantryItemDTO) -> Unit,
+    back: () -> Unit
 )
 {
     var item by remember { mutableStateOf(initialItem) }
@@ -59,8 +54,11 @@ fun PantryItemForm(
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
+        Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+            Icon(XCircle, contentDescription = null, Modifier.size(32.dp).clickable{back()}, tint = MaterialTheme.colorScheme.error)
+        }
         Text(titleText, color = MaterialTheme.colorScheme.primary, fontSize = TEXT_L.sp)
-        Column(Modifier.padding(0.dp, 32.dp).border(2.dp,brush = AppTheme.brushes.primaryGradient, shape = RoundedCornerShape(0.dp)), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.padding(0.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
 
             TextField(

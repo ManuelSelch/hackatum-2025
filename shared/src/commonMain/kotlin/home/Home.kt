@@ -4,6 +4,7 @@ import common.Store
 import common.UserService
 import kotlinx.coroutines.launch
 import models.GroupDTO
+import pantry.PantryAPI
 
 data class HomeState(
     val groups: List<GroupDTO> = emptyList(),
@@ -44,6 +45,7 @@ sealed class HomeEffect {
 
 class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
     private val api = HomeAPI()
+    private val apiPantry = PantryAPI()
 
     override fun reduce(state: HomeState, action: HomeAction): HomeState {
         println(action)
