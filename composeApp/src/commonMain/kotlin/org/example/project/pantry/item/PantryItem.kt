@@ -2,6 +2,7 @@ package org.example.project.pantry.item
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,13 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_REG
 import org.example.project.theme.icons.Drink
 import org.example.project.theme.icons.Food
 import org.example.project.theme.icons.Misc
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 
@@ -29,7 +28,7 @@ fun PantryItemCard(
     quantity: Double,
     category: String?,
     minimumQuantity: Int?,
-    clickable: clickable
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -37,8 +36,8 @@ fun PantryItemCard(
             .background(AppTheme.brushes.gradient)
             .width(100.dp)
             .height(110.dp)
-            .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium),
-
+            .border(1.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium)
+            .clickable { onClick() },
 
     ) {
         Column(Modifier.fillMaxWidth().fillMaxHeight().padding(0.dp, 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
@@ -58,15 +57,6 @@ fun PantryItemCard(
 
 
     }
-}
-
-@Preview
-@Composable
-fun PantryItemCardPreview(){
-    AppTheme{
-        PantryItemCard("Toilet Paper", "Rolls", 9.0, "misc", minimumQuantity = 3, Modifier.clickable(updateTapped))
-    }
-
 }
 
 fun Double.pretty(): String =

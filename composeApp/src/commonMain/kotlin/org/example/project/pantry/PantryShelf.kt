@@ -74,9 +74,7 @@ fun PantryShelf(
                             quantity = 3.0,
                             category = null,
                             minimumQuantity = null,
-                            Modifier.clickable(
-                                onClick = { updateTapped() }
-                            )
+                            updateTapped
                         )
                     }
                 }
