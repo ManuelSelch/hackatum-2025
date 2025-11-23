@@ -27,9 +27,11 @@ sealed class AppEffect {
 
 
 class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
+    val user = UserService()
+
     val login = LoginStore()
-    val home = HomeStore()
-    val pantry = PantryStore()
+    val home = HomeStore(user)
+    val pantry = PantryStore(user)
 
     init {
         login.listen {

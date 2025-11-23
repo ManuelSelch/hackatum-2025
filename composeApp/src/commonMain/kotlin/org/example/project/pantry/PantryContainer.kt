@@ -7,28 +7,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import pantry.PantryAction
+import org.example.project.pantry.item.AddPantryItemScreen
+import org.example.project.pantry.item.UpdatePantryItemScreen
+import pantry.PantryAction.*
 import pantry.PantryRoute
 import pantry.PantryStore
 import pantry.ShelfType
 
 @Composable
-@Preview
-fun PantryContainer(store: PantryStore = PantryStore()) {
+
+fun PantryContainer(store: PantryStore) {
     val state by store.state.collectAsState()
 
     Column(Modifier.fillMaxSize().safeContentPadding()) {
         when (val route = state.route) {
             is PantryRoute.Shelf -> PantryShelf(
-                route.type,
-                { store.dispatch(PantryAction.GoToView) }
+                shelfType = route.type,
+                createTapped = {store.dispatch(GoToCreatePantryItem)},
+                updateTapped = {store.dispatch(GoToUpdatePantryItem)},
+                onBack = { store.dispatch(GoToView) }
             )
 
-            PantryRoute.View -> PantryView(
-                { store.dispatch(PantryAction.GoToShelf(ShelfType.Food)) },
-                { store.dispatch(PantryAction.GoToShelf(ShelfType.Drinks)) },
-                { store.dispatch(PantryAction.GoToShelf(ShelfType.Miscellaneous)) }
+            is PantryRoute.View -> PantryView(
+                { store.dispatch(GoToShelf(ShelfType.Food)) },
+                { store.dispatch(GoToShelf(ShelfType.Drinks)) },
+                { store.dispatch(GoToShelf(ShelfType.Miscellaneous)) }
+            )
+
+            is PantryRoute.Create -> AddPantryItemScreen(
+                onCreate = { store.dispatch(CreatePantryItem(it)) },
+
+            )
+            is PantryRoute.Update -> UpdatePantryItemScreen(
+                item = route.item,
+                onUpdate = { store.dispatch(UpdatePantryItem(it)) },
             )
         }
     }

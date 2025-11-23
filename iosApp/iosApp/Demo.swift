@@ -2,7 +2,14 @@ import SwiftUI
 
 struct Demo: View {
     var body: some View {
-        Text("test2d")
+        VStack {
+            Text("aff2")
+            Image(systemName: "person")
+                .font(.title)
+                .bold()
+            Text("test")
+        }
+        .padding()
     }
 }
 

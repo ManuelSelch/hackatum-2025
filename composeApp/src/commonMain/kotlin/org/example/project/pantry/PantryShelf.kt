@@ -1,6 +1,7 @@
 package org.example.project.pantry
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,14 +20,15 @@ import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_L
 import org.example.project.theme.icons.Arrow_drop_down
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import pantry.ShelfType
 
 
 @Composable
 fun PantryShelf(
     shelfType: ShelfType,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    updateTapped: () -> Unit,
+    createTapped: () -> Unit
 )
 {
     AppTheme{
@@ -71,7 +73,8 @@ fun PantryShelf(
                             unit = null,
                             quantity = 3.0,
                             category = null,
-                            minimumQuantity = null
+                            minimumQuantity = null,
+                            updateTapped
                         )
                     }
                 }
@@ -83,6 +86,7 @@ fun PantryShelf(
                     modifier = Modifier.wrapContentWidth().clip(ButtonDefaults.shape).background(brush = AppTheme.brushes.primaryGradient).align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     onClick = {
+                        createTapped()
                         items = items + "New Item ${items.size + 1}"
                     }
                 ) {

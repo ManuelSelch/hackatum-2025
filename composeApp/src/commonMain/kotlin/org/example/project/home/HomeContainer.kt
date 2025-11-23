@@ -18,12 +18,9 @@ import home.HomeAction
 import home.HomeRoute
 import home.HomeStore
 import org.example.project.theme.AppColors.AppTheme
-import org.example.project.theme.AppTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-@Preview
-fun HomeContainer(store: HomeStore = HomeStore()) {
+fun HomeContainer(store: HomeStore ) {
     val state by store.state.collectAsState()
 
     AppTheme() {
@@ -54,7 +51,8 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(
-                        { store.dispatch(HomeAction.CreateHouseHold(it)) }
+                        { store.dispatch(HomeAction.CreateHouseHold(it)) },
+                        {store.dispatch(HomeAction.BackTapped)}
                     )
 
                     HomeRoute.Join -> JoinView(
