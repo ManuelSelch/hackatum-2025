@@ -24,7 +24,7 @@ data class GroupDTO(
 @Serializable
 data class ExpenseDTO(
     val id: Long,
-    val groupId: Long,
+    val groupID: Long,
     val payer: UserDTO,
     val amount: Double,
     val description: String,

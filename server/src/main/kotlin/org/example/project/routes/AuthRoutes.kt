@@ -131,9 +131,8 @@ fun Route.authRoutes(userDao: UserDao, jwt: JwtService) {
                     return@post
                 }
 
-                UserService(userDao).update(request)
-
-                call.respond(HttpStatusCode.OK)
+                if(UserService(userDao).update(request) == null) call.respond(HttpStatusCode.NoContent, ErrorDTO("User not found"))
+                else call.respond(HttpStatusCode.OK)
             }
 
             post("/delete") {

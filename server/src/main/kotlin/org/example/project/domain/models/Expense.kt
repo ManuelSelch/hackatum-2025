@@ -2,7 +2,7 @@ package org.example.project.domain.models
 
 data class Expense(
     val id: Long,
-    val groupId: Long,
+    val groupID: Long,
     val payer: User,
     val amount: Double,
     val description: String,
@@ -11,7 +11,7 @@ data class Expense(
 
 fun Expense.toDTO() = models.ExpenseDTO(
     id = id,
-    groupId = groupId,
+    groupID = groupID,
     payer = payer.toDTO(),
     amount = amount,
     description = description,
