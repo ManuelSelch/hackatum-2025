@@ -1,6 +1,7 @@
 package org.example.project.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun CreateHouseholdView(
     createHousehold: (name: String) -> Unit,
+    backTapped: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
 
@@ -31,8 +33,14 @@ fun CreateHouseholdView(
     ) {
         Text("Create Household")
         TextField(name, onValueChange = { name = it }, label = { Text("Name") })
-        Button(onClick = { createHousehold(name) }) {
-            Text("Create")
+
+        Row {
+            Button(onClick = { createHousehold(name) }) {
+                Text("Create")
+            }
+            Button(backTapped) {
+                Text("Back")
+            }
         }
     }
 }
@@ -40,5 +48,5 @@ fun CreateHouseholdView(
 @Composable
 @Preview
 fun CreateHouseholdPreview() {
-    CreateHouseholdView({})
+    CreateHouseholdView({}, {})
 }

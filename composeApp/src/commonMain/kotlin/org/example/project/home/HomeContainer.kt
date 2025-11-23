@@ -51,7 +51,8 @@ fun HomeContainer(store: HomeStore ) {
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(
-                        { store.dispatch(HomeAction.CreateHouseHold(it)) }
+                        { store.dispatch(HomeAction.CreateHouseHold(it)) },
+                        {store.dispatch(HomeAction.BackTapped)}
                     )
 
                     HomeRoute.Join -> JoinView(
