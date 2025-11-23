@@ -10,14 +10,13 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import models.ErrorResponse
+import models.ErrorDTO
 import models.GroupCreateRequest
 import models.GroupJoinRequest
 import models.GroupListResponse
 import org.example.project.dao.GroupDao
 import org.example.project.dao.UserDao
-import org.example.project.database.toResponse
-import org.example.project.domain.models.toResponse
+import org.example.project.domain.models.toDTO
 
 fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
     authenticate("auth-jwt") {
@@ -29,13 +28,13 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 if (userID == 0L) {
                     call.respond(
                         HttpStatusCode.Unauthorized,
-                        ErrorResponse("Invalid JWT")
+                        ErrorDTO("Invalid JWT")
                     )
                     return@get
                 }
 
                 val groups = groupDao.getGroupsByUserID(userID)
-                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toResponse() }))
+                call.respond(HttpStatusCode.OK, GroupListResponse(groups = groups.map { it.toDTO() }))
             }
 
             post("/create") {
@@ -45,7 +44,7 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 if (userID == 0L) {
                     call.respond(
                         HttpStatusCode.Unauthorized,
-                        ErrorResponse("Invalid JWT")
+                        ErrorDTO("Invalid JWT")
                     )
                     return@post
                 }
@@ -56,7 +55,7 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 if (name.isEmpty()) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        ErrorResponse("Missing required fields: name")
+                        ErrorDTO("Missing required fields: name")
                     )
                     return@post
                 }
@@ -65,13 +64,13 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 if (user == null) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        ErrorResponse("User not found")
+                        ErrorDTO("User not found")
                     )
                     return@post
                 }
 
                 val group = groupDao.create(name, userID)
-                call.respond(HttpStatusCode.Created, group.toResponse())
+                call.respond(HttpStatusCode.Created, group.toDTO())
             }
 
             post("/join") {
@@ -81,7 +80,7 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
                 if (userID == 0L) {
                     call.respond(
                         HttpStatusCode.Unauthorized,
-                        ErrorResponse("Invalid JWT")
+                        ErrorDTO("Invalid JWT")
                     )
                     return@post
                 }
@@ -91,8 +90,8 @@ fun Route.groupRoutes(userDao: UserDao, groupDao: GroupDao) {
 
                 val result = groupDao.addUser(groupID, userID)
                 result
-                    .onFailure { call.respond(HttpStatusCode.BadRequest, ErrorResponse(it.message?: "Unknown error")) }
-                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, ErrorDTO(it.message?: "Unknown error")) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toDTO()) }
             }
         }
     }

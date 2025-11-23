@@ -1,9 +1,9 @@
 package org.example.project.database
 
-import models.ExpenseResponse
-import models.PantryItemResponse
+import models.ExpenseDTO
+import models.PantryItemDTO
 import org.example.project.domain.models.User
-import org.example.project.domain.models.toResponse
+import org.example.project.domain.models.toDTO
 import java.math.BigDecimal
 
 
@@ -17,13 +17,13 @@ data class Expense(
     val borrowers: List<User>,
 )
 
-fun Expense.toResponse() = ExpenseResponse(
+fun Expense.toResponse() = ExpenseDTO(
     id = id,
     groupId = groupId,
-    payer = payer.toResponse(),
+    payer = payer.toDTO(),
     amount = amount.toDouble(),
     description = description,
-    borrowers = borrowers.map { it.toResponse() },
+    borrowers = borrowers.map { it.toDTO() },
 )
 
 data class PantryItem(
@@ -36,7 +36,7 @@ data class PantryItem(
     val category: String
 )
 
-fun PantryItem.toResponse() = PantryItemResponse(
+fun PantryItem.toResponse() = PantryItemDTO(
     groupId = groupId,
     name = name,
     unit = unit,

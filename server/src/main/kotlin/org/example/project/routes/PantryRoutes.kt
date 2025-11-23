@@ -8,17 +8,18 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
-import models.PantryItemRequest
+import models.PantryItemDTO
+import models.PantryItemsCategorizedResponse
 import org.example.project.dao.PantryItemDao
 import org.example.project.domain.models.PantryItem
-import org.example.project.domain.models.toResponse
+import org.example.project.domain.models.toDTO
 import org.example.project.services.PantryItemService
 
 fun Route.pantryRoutes(pantryDao: PantryItemDao) {
     authenticate("auth-jwt") {
         route("/pantry") {
             post("") {
-                val request = call.receive<PantryItemRequest>();
+                val request = call.receive<PantryItemDTO>();
 
                 val item = pantryDao.create(
                     request.groupId,
@@ -29,7 +30,7 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
                     request.category
                 )
 
-                call.respond(HttpStatusCode.OK, item.toResponse())
+                call.respond(HttpStatusCode.OK, item.toDTO())
             }
 
             get("") {
@@ -49,11 +50,24 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
 
                 items
                     .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
-                    .onSuccess { call.respond(HttpStatusCode.OK, it.map { item -> item.toResponse()}) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.map { item -> item.toDTO()}) }
+            }
+
+            get("/categorized") {
+                val groupID = call.parameters["groupID"]?.toLongOrNull() ?: 0L
+
+                if (groupID == 0L) {
+                    call.respond(HttpStatusCode.BadRequest, "groupID is required")
+                    return@get
+                }
+
+                PantryItemService(pantryDao).getPantryItemsGroupedByCategory(groupID)
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
+                    .onSuccess { call.respond(HttpStatusCode.OK, PantryItemsCategorizedResponse(items = it.mapValues { (_, value) -> value.map { item -> item.toDTO()} })) }
             }
 
             post("/update") {
-                val request = call.receive<PantryItemRequest>()
+                val request = call.receive<PantryItemDTO>()
 
                 val result = pantryDao.update(
                     PantryItem(
@@ -68,11 +82,11 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
 
                 result
                     .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
-                    .onSuccess { call.respond(HttpStatusCode.OK, it.toResponse()) }
+                    .onSuccess { call.respond(HttpStatusCode.OK, it.toDTO()) }
             }
 
             post("/delete") {
-                val request = call.receive<PantryItemRequest>()
+                val request = call.receive<PantryItemDTO>()
 
                 val result = pantryDao.delete(
                     PantryItem(

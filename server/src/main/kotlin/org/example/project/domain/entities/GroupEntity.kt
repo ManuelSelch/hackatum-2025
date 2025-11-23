@@ -13,13 +13,11 @@ class GroupEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var name by GroupsTable.name
     var members by UserEntity via GroupsMembersTable
-    val expenses by ExpenseEntity referrersOn ExpensesTable.groupId
 
     // Convert to business logic model
     fun toModel() = Group(
         id = id.value,
         name = name,
-        members = members.toList().map { it.toModel() },
-        expenses = expenses.toList().map { it.toModel() }
+        members = members.toList().map { it.toModel() }
     )
 }

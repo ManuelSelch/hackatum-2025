@@ -1,6 +1,6 @@
 package org.example.project.domain.models
 
-import models.PantryItemResponse
+import models.PantryItemDTO
 
 data class PantryItem(
     val groupID: Long,
@@ -11,7 +11,7 @@ data class PantryItem(
     val category: String,
 )
 
-fun PantryItem.toResponse() = PantryItemResponse(
+fun PantryItem.toDTO() = PantryItemDTO(
     groupId = groupID,
     name = name,
     quantity = quantity,

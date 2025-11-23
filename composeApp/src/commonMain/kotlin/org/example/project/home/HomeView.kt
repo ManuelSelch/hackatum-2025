@@ -9,15 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import models.GroupResponse
+import models.GroupDTO
 import org.example.project.home.components.*
 import org.example.project.theme.TEXT_REG
 
 @Composable
 fun HomeView(
-    groups: List<GroupResponse>,
-    current: GroupResponse?,
-    groupSelected: (GroupResponse) -> Unit,
+    groups: List<GroupDTO>,
+    current: GroupDTO?,
+    groupSelected: (GroupDTO) -> Unit,
     createHouseholdTapped: () -> Unit,
     joinTapped: () -> Unit,
     inviteTapped: () -> Unit,

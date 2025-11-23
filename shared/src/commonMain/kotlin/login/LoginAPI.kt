@@ -4,7 +4,7 @@ import common.API
 import models.LoginRequest
 import models.LoginResponse
 import models.RegisterRequest
-import models.UserResponse
+import models.UserDTO
 
 class LoginAPI: API() {
     suspend fun login(email: String, password: String): Result<LoginResponse> {
@@ -16,7 +16,7 @@ class LoginAPI: API() {
         return res;
     }
 
-    suspend fun register(username: String, email: String, password: String): Result<UserResponse> {
+    suspend fun register(username: String, email: String, password: String): Result<UserDTO> {
         return post("/auth/register", RegisterRequest(username, email, password))
     }
 }

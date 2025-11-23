@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import models.GroupResponse
+import models.GroupDTO
 import org.example.project.theme.icons.Add
 import org.example.project.theme.icons.Arrow_drop_down
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -15,10 +15,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HouseDropdown(
-    items: List<GroupResponse>,
+    items: List<GroupDTO>,
     label: String = "Select item",
-    current: GroupResponse?,
-    onSelected: (GroupResponse) -> Unit,
+    current: GroupDTO?,
+    onSelected: (GroupDTO) -> Unit,
     createHouseholdTapped: () -> Unit
 ) {
         var expanded by remember { mutableStateOf(false) }

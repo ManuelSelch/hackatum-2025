@@ -3,14 +3,14 @@ package home
 import common.Store
 import common.UserService
 import kotlinx.coroutines.launch
-import models.GroupResponse
+import models.GroupDTO
 
 data class HomeState(
-    val groups: List<GroupResponse> = emptyList(),
+    val groups: List<GroupDTO> = emptyList(),
     val route: HomeRoute = HomeRoute.Dashboard,
     val loading: Boolean = false,
     val error: String? = null,
-    val current: GroupResponse? = null
+    val current: GroupDTO? = null
 )
 
 enum class HomeRoute { Dashboard, CreateHouseHold, Invite, Join, Settings }
@@ -18,11 +18,11 @@ enum class HomeRoute { Dashboard, CreateHouseHold, Invite, Join, Settings }
 sealed class HomeAction {
     data object CreateHouseHoldTapped: HomeAction()
     data class CreateHouseHold(val name: String): HomeAction()
-    data class GroupSelected(val group: GroupResponse): HomeAction()
+    data class GroupSelected(val group: GroupDTO): HomeAction()
 
     data object HouseholdCreated: HomeAction()
     data class Failed(val error: String): HomeAction()
-    data class GroupsFetched(val groups: List<GroupResponse>): HomeAction()
+    data class GroupsFetched(val groups: List<GroupDTO>): HomeAction()
 
     data object InviteTapped: HomeAction()
     data object JoinTapped: HomeAction()

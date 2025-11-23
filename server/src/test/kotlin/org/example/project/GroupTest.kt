@@ -50,7 +50,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val group = Json.decodeFromString<GroupResponse>(response.bodyAsText())
+        val group = Json.decodeFromString<GroupDTO>(response.bodyAsText())
         assertEquals("My Awesome Group", group.name)
         assertTrue(group.id > 0)
         assertEquals(group.members.size, 1)
@@ -224,7 +224,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val group = Json.decodeFromString<GroupResponse>(response.bodyAsText())
+        val group = Json.decodeFromString<GroupDTO>(response.bodyAsText())
         assertEquals("Trimmed Group", group.name)
     }
 
@@ -267,7 +267,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response1.status)
-        val group1 = Json.decodeFromString<GroupResponse>(response1.bodyAsText())
+        val group1 = Json.decodeFromString<GroupDTO>(response1.bodyAsText())
 
         // Create second group
         val response2 = client.post("/group/create") {
@@ -279,7 +279,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response2.status)
-        val group2 = Json.decodeFromString<GroupResponse>(response2.bodyAsText())
+        val group2 = Json.decodeFromString<GroupDTO>(response2.bodyAsText())
 
         // Verify they are different groups
         assertNotEquals(group1.id, group2.id)
@@ -326,7 +326,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val group = Json.decodeFromString<GroupResponse>(response.bodyAsText())
+        val group = Json.decodeFromString<GroupDTO>(response.bodyAsText())
         assertEquals("Group & Friends! 🎉", group.name)
     }
 
@@ -369,7 +369,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val group = Json.decodeFromString<GroupResponse>(response.bodyAsText())
+        val group = Json.decodeFromString<GroupDTO>(response.bodyAsText())
 
         // Verify creator is in members list
         assertEquals(1, group.members.size)
@@ -415,7 +415,7 @@ class GroupCreateEndpointTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val group = Json.decodeFromString<GroupResponse>(response.bodyAsText())
+        val group = Json.decodeFromString<GroupDTO>(response.bodyAsText())
 
         // Verify expenses list is empty for new group
         assertTrue(group.expenses.isEmpty())
