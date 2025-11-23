@@ -11,4 +11,8 @@ class PantryItemService(pantryItemDao: PantryItemDao) {
 
         items.filter { it.quantity <= it.minimumQuantity }
     }
+
+    fun getPantryItemsGroupedByCategory(groupID: Long): Result<Map<String, List<PantryItem>>> = runCatching {
+        dao.getPantryItemsByGroupID(groupID).getOrThrow().groupBy { it.category }
+    }
 }

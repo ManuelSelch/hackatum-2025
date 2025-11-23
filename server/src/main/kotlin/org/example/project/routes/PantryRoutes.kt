@@ -9,6 +9,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import models.PantryItemDTO
+import models.PantryItemsCategorizedResponse
 import org.example.project.dao.PantryItemDao
 import org.example.project.domain.models.PantryItem
 import org.example.project.domain.models.toDTO
@@ -50,6 +51,19 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
                 items
                     .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
                     .onSuccess { call.respond(HttpStatusCode.OK, it.map { item -> item.toDTO()}) }
+            }
+
+            get("/categorized") {
+                val groupID = call.parameters["groupID"]?.toLongOrNull() ?: 0L
+
+                if (groupID == 0L) {
+                    call.respond(HttpStatusCode.BadRequest, "groupID is required")
+                    return@get
+                }
+
+                PantryItemService(pantryDao).getPantryItemsGroupedByCategory(groupID)
+                    .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
+                    .onSuccess { call.respond(HttpStatusCode.OK, PantryItemsCategorizedResponse(items = it.mapValues { (_, value) -> value.map { item -> item.toDTO()} })) }
             }
 
             post("/update") {
