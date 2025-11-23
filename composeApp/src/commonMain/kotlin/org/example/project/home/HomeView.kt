@@ -1,10 +1,7 @@
 package org.example.project.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import models.GroupResponse
 import org.example.project.home.components.*
-import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.TEXT_REG
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -27,6 +23,7 @@ fun HomeView(
     joinTapped: () -> Unit,
     inviteTapped: () -> Unit,
     refreshTapped: () -> Unit,
+    pantryTapped: () -> Unit,
 ) {
     Column(
         Modifier.fillMaxSize()
@@ -120,11 +117,9 @@ fun HomeView(
             ) {
                 ExpenseWidget()
                 Column(Modifier.padding(0.dp, 0.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    PantryWidget()
+                    PantryWidget(pantryTapped)
                     ShoppingWidget()
                 }
-
-
             }
 
         }
@@ -140,6 +135,7 @@ fun HomePreview() {
         {},
         {},
         {}, {},
+        {},
         {}
     )
 }

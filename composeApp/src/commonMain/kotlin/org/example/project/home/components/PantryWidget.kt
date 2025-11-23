@@ -2,6 +2,7 @@ package org.example.project.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -16,9 +17,11 @@ import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_M
 import org.example.project.theme.icons.Grocery
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun PantryWidget(){
+@Preview
+fun PantryWidget(onClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .background(AppTheme.brushes.gradient, shape = RoundedCornerShape(24.dp))
@@ -29,6 +32,7 @@ fun PantryWidget(){
                     color = MaterialTheme.colorScheme.outline,
                     shape = RoundedCornerShape(24.dp)
                 )
+                .clickable { onClick() }
         ) {
             Row(
                 Modifier.fillMaxWidth().fillMaxHeight().padding(4.dp),
@@ -51,5 +55,4 @@ fun PantryWidget(){
             }
 
         }
-
 }

@@ -31,15 +31,19 @@ sealed class HomeAction {
 
     data object BackTapped: HomeAction()
     data object RefreshTapped: HomeAction()
+
+    data object PantryTapped: HomeAction()
 }
 
-sealed class HomeEffect {}
+sealed class HomeEffect {
+    data object NavigateToPantry: HomeEffect()
+}
 
 class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
     private val api = HomeAPI()
 
     override fun reduce(state: HomeState, action: HomeAction): HomeState {
-        println("action:\t $action")
+        println(action)
 
         return when (action) {
             is HomeAction.CreateHouseHoldTapped -> state.copy(route = HomeRoute.CreateHouseHold)
@@ -60,6 +64,7 @@ class HomeStore: Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
 
             is HomeAction.BackTapped -> state.copy(route = HomeRoute.Dashboard)
             is HomeAction.RefreshTapped -> { fetchHouseholds(); state}
+            is HomeAction.PantryTapped -> { emit(HomeEffect.NavigateToPantry); state}
         }
     }
 

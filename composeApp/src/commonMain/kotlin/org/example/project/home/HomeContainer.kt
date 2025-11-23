@@ -50,6 +50,7 @@ fun HomeContainer(store: HomeStore = HomeStore()) {
                         { store.dispatch(HomeAction.JoinTapped) },
                         { store.dispatch((HomeAction.InviteTapped)) },
                         { store.dispatch(HomeAction.RefreshTapped) },
+                        { store.dispatch(HomeAction.PantryTapped) },
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(
