@@ -34,9 +34,9 @@ data class ExpenseDTO(
 @Serializable
 data class PantryItemDTO(
     val groupId: Long,
-    val name: String,
+    var name: String,
     val quantity: Int,
-    val category: String,
-    val unit: String,
+    var category: String,
+    var unit: String,
     val minimumQuantity: Int,
 )

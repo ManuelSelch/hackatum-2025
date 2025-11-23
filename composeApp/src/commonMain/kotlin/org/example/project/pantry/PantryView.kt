@@ -12,19 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import models.PantryItemDTO
 import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.TEXT_XL
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @Composable
-@Preview
+
 fun PantryView(
     foodTapped: () -> Unit,
     drinksTapped: () -> Unit,
     miscellaneousTapped: () -> Unit,
+    pantryItems: List<PantryItemDTO>,
 
-) {
+    ) {
     AppTheme(darkTheme = false) {
         Surface {
             Column(
