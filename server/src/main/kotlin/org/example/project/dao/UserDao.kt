@@ -6,12 +6,12 @@ import org.example.project.domain.models.User
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserDao() {
-    fun create(name: String, email: String, password: String): User {
+    fun create(newUser: User): User {
         return transaction {
             UserEntity.new {
-                this.name = name
-                this.email = email
-                this.password = password
+                this.name = newUser.name
+                this.email = newUser.email
+                this.password = newUser.password
             }.toModel()
         }
     }

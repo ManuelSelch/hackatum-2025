@@ -9,12 +9,11 @@ data class Expense(
     val borrowers: List<User>,
 )
 
-fun Expense.toResponse() = models.ExpenseResponse(
+fun Expense.toDTO() = models.ExpenseDTO(
     id = id,
     groupId = groupId,
-    payer = payer.toResponse(),
+    payer = payer.toDTO(),
     amount = amount,
     description = description,
-    borrowers = borrowers.map { it.toResponse() }
-
+    borrowers = borrowers.map { it.toDTO() }
 )

@@ -27,7 +27,7 @@ class AuthEndpointsTest {
         }
 
         assertEquals(HttpStatusCode.Created, response.status)
-        val user = Json.decodeFromString<UserResponse>(response.bodyAsText())
+        val user = Json.decodeFromString<UserDTO>(response.bodyAsText())
         assertEquals("John Doe", user.name)
         assertEquals("john@example.com", user.email)
         assertTrue(user.id > 0)

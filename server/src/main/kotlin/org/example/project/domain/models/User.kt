@@ -1,6 +1,6 @@
 package org.example.project.domain.models
 
-import models.UserResponse
+import models.UserDTO
 
 data class User(
     val id: Long,
@@ -9,7 +9,7 @@ data class User(
     val password: String,
 )
 
-fun User.toResponse() = UserResponse(
+fun User.toDTO() = UserDTO(
     id = id,
     name = name,
     email = email,

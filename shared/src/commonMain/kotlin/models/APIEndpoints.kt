@@ -25,7 +25,7 @@ data class LoginRequest(
 data class LoginResponse(
     val message: String,
     val token: String,
-    val user: UserResponse
+    val user: UserDTO
 )
 
 // GROUPS
@@ -50,7 +50,7 @@ data class GroupJoinRequest(
 // response
 @Serializable
 data class GroupListResponse(
-    val groups: List<GroupResponse>
+    val groups: List<GroupDTO>
 )
 
 // PANTRY
