@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import home.HomeAction
 import home.HomeRoute
 import home.HomeStore
+import org.example.project.login.SettingsView
 import org.example.project.theme.AppColors.AppTheme
 
 @Composable
@@ -64,11 +65,6 @@ fun HomeContainer(store: HomeStore ) {
                     HomeRoute.Invite -> InviteView(
                         state.current?.id,
                         backTapped = { store.dispatch(HomeAction.BackTapped) }
-                    )
-
-                    HomeRoute.Settings -> SettingsView(
-                        {},
-                        {}
                     )
                 }
             }

@@ -13,7 +13,7 @@ data class HomeState(
     val current: GroupDTO? = null
 )
 
-enum class HomeRoute { Dashboard, CreateHouseHold, Invite, Join, Settings }
+enum class HomeRoute { Dashboard, CreateHouseHold, Invite, Join }
 
 sealed class HomeAction {
     data object CreateHouseHoldTapped: HomeAction()
@@ -35,14 +35,11 @@ sealed class HomeAction {
 
     data object PantryTapped: HomeAction()
     data object SettingsTapped: HomeAction()
-
-    data object Logout: HomeAction()
-    data class ProfileSave(val username: String, val email: String): HomeAction()
 }
 
 sealed class HomeEffect {
     data object NavigateToPantry: HomeEffect()
-    data object NavigateToLogin: HomeEffect()
+    data object NavigateToSettings: HomeEffect()
 }
 
 class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>(HomeState()) {
@@ -74,9 +71,7 @@ class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>
             is HomeAction.BackTapped -> state.copy(route = HomeRoute.Dashboard)
             is HomeAction.RefreshTapped -> { fetchHouseholds(); state}
             is HomeAction.PantryTapped -> { emit(HomeEffect.NavigateToPantry); state}
-            is HomeAction.SettingsTapped -> state.copy(route = HomeRoute.Settings)
-            is HomeAction.Logout -> logout(state)
-            is HomeAction.ProfileSave -> saveProfile(state, action.username, action.email)
+            is HomeAction.SettingsTapped -> { emit(HomeEffect.NavigateToSettings); state}
         }
     }
 
@@ -115,18 +110,5 @@ class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>
         }
 
         return  state.copy(loading = true, error = null)
-    }
-
-    fun logout(state: HomeState): HomeState {
-        api.clearToken()
-        emit(HomeEffect.NavigateToLogin)
-        return state.copy(route = HomeRoute.Dashboard)
-    }
-
-    fun saveProfile(state: HomeState, username: String, email: String): HomeState {
-        scope.launch {
-            api.list()
-        }
-        return  state
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import home.HomeAction
 import login.LoginAction
 import login.LoginRoute
 import login.LoginStore
@@ -67,6 +68,12 @@ fun LoginContainer(store: LoginStore = LoginStore()) {
                 {
                     store.dispatch(LoginAction.Register(username, email, password))
                 }
+            )
+
+            LoginRoute.Settings -> SettingsView(
+                state.username ?: "", state.email ?: "",
+                { username, email -> store.dispatch((LoginAction.Update(username, email))) },
+                { store.dispatch(LoginAction.Logout) }
             )
         }
     }
