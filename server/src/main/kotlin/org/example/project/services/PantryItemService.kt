@@ -7,9 +7,8 @@ class PantryItemService(pantryItemDao: PantryItemDao) {
     val dao = pantryItemDao
 
     fun getPantryItemsOutOfStock(groupID: Long): Result<List<PantryItem>> = runCatching {
-            val items = dao.getPantryItemsByGroupID(groupID).getOrThrow()
+        val items = dao.getPantryItemsByGroupID(groupID).getOrThrow()
 
-            items.filter { it.quantity <= it.minimumQuantity }
-        }
+        items.filter { it.quantity <= it.minimumQuantity }
     }
 }
