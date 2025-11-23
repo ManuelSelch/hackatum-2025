@@ -35,7 +35,7 @@ fun PantryItemCard(name: String, unit: String?, quantity: Double, category: Stri
 
     ) {
         Column(Modifier.fillMaxWidth().fillMaxHeight().padding(0.dp, 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween) {
-            Icon(if(category == "food") Food else if(category == "drink") Drink else Misc, contentDescription = "food_icon", Modifier.size(48.dp), tint = MaterialTheme.colorScheme.primary)
+            Icon(if(category == "Food") Food else if(category == "Drinks") Drink else Misc, contentDescription = "food_icon", Modifier.size(48.dp), tint = MaterialTheme.colorScheme.primary)
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 // Color Indicators for how much is left compared to wanted amount.
                 Text("${quantity.pretty()} ${unit ?: ""}",  fontSize = TEXT_REG.sp,

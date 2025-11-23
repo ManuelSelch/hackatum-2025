@@ -11,6 +11,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import pantry.PantryAction
 import pantry.PantryRoute
 import pantry.PantryStore
+import pantry.ShelfType
 
 @Composable
 @Preview
@@ -18,16 +19,16 @@ fun PantryContainer(store: PantryStore = PantryStore()) {
     val state by store.state.collectAsState()
 
     Column(Modifier.fillMaxSize().safeContentPadding()) {
-        when (state.route) {
+        when (val route = state.route) {
             is PantryRoute.Shelf -> PantryShelf(
-                (state.route as PantryRoute.Shelf).type,
+                route.type,
                 { store.dispatch(PantryAction.GoToView) }
             )
 
             PantryRoute.View -> PantryView(
-                { store.dispatch(PantryAction.GoToShelf("food")) },
-                { store.dispatch(PantryAction.GoToShelf("drinks")) },
-                { store.dispatch(PantryAction.GoToShelf("miscellaneous")) }
+                { store.dispatch(PantryAction.GoToShelf(ShelfType.Food)) },
+                { store.dispatch(PantryAction.GoToShelf(ShelfType.Drinks)) },
+                { store.dispatch(PantryAction.GoToShelf(ShelfType.Miscellaneous)) }
             )
         }
     }

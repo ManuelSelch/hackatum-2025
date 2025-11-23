@@ -2,8 +2,8 @@ package org.example.project.pantry
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -81,15 +81,15 @@ fun PantryView(
 
 @Composable
 fun ShelfRow(type: String, onClick: () -> Unit,  modifier: Modifier = Modifier) {
-    Button(onClick) {
         Box(
             modifier = modifier
+                .clickable(onClick = onClick)
                 .padding(horizontal = 12.dp, vertical = 6.dp)
                 .background(
                     color = when (type) {
                         "Food" -> MaterialTheme.colorScheme.outlineVariant
                         "Drinks" -> MaterialTheme.colorScheme.outline
-                        else -> MaterialTheme.colorScheme.primary.copy(1f)
+                        else -> MaterialTheme.colorScheme.primary.copy(0.8f)
                     },
                     shape = MaterialTheme.shapes.medium
                 ).border(2.dp, MaterialTheme.colorScheme.outline, MaterialTheme.shapes.medium),
@@ -98,6 +98,5 @@ fun ShelfRow(type: String, onClick: () -> Unit,  modifier: Modifier = Modifier) 
             Text(type, fontSize = TEXT_XL.sp)
 
         }
-    }
 
 }
