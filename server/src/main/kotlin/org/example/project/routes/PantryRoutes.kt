@@ -49,9 +49,9 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
 
                 val outOfStock = call.parameters["outOfStock"]?.toBooleanStrictOrNull() ?: false
                 val items = if (outOfStock) {
-                    pantryDao.getPantryItemsByGroupID(groupID)
-                } else {
                     PantryItemService(pantryDao).getPantryItemsOutOfStock(groupID)
+                } else {
+                    pantryDao.getPantryItemsByGroupID(groupID)
                 }
 
                 items
