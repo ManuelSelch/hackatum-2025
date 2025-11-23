@@ -4,17 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import models.PantryItemDTO
 import org.example.project.theme.AppColors.AppTheme
+import org.example.project.theme.TEXT_L
 import org.example.project.theme.TEXT_XL
+import org.example.project.theme.icons.Arrow_drop_down
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -24,6 +29,7 @@ fun PantryView(
     foodTapped: () -> Unit,
     drinksTapped: () -> Unit,
     miscellaneousTapped: () -> Unit,
+    onBack: () -> Unit,
     pantryItems: List<PantryItemDTO>,
 
     ) {
@@ -37,6 +43,7 @@ fun PantryView(
             )
             {
                 // Top title section (25% height)
+                TextButton(onClick = onBack) { Row(verticalAlignment = Alignment.CenterVertically){Icon(Arrow_drop_down, contentDescription = "back_to_pantry",  Modifier.rotate(90f).size(32.dp), tint = MaterialTheme.colorScheme.primary); Text("Back", fontSize = TEXT_L.sp) }}
                 Box(
                     modifier = Modifier
                         .weight(1f)
