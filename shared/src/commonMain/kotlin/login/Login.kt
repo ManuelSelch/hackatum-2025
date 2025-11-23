@@ -95,6 +95,6 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
             if(success)
                 emit(LoginEffect.NavigateToHome)
         }
-        return state
+        return state.copy(username = username, email = email)
     }
 }
