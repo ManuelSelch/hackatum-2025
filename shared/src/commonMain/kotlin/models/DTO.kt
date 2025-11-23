@@ -35,8 +35,8 @@ data class ExpenseDTO(
 data class PantryItemDTO(
     val groupId: Long,
     var name: String,
-    val quantity: Int,
+    var quantity: Int,
     var category: String,
     var unit: String,
-    val minimumQuantity: Int,
+    var minimumQuantity: Int,
 )

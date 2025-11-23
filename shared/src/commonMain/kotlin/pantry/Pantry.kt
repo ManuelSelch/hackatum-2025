@@ -46,11 +46,8 @@ class PantryStore(val user: UserService): Store<PantryState, PantryAction, Pantr
 
     override fun reduce(state: PantryState, action: PantryAction): PantryState {
         return when (action) {
-            is PantryAction.GoToShelf -> state.copy(route = Shelf(action.type))
-            is PantryAction.GoToView -> {
-                fetchPantryItems()
-                state.copy(route = View)
-            };
+            is PantryAction.GoToShelf ->{ fetchPantryItems(); state.copy(route = Shelf(action.type))}
+            is PantryAction.GoToView -> state.copy(route = View)
             PantryAction.GoToCreatePantryItem -> state.copy(route = Create)
             PantryAction.GoToUpdatePantryItem -> state;
             is PantryAction.CreatePantryItem -> createPantryItem(state, action.item);
@@ -63,23 +60,40 @@ class PantryStore(val user: UserService): Store<PantryState, PantryAction, Pantr
     }
     fun createPantryItem(state: PantryState, item: PantryItemDTO): PantryState {
         scope.launch{
-            api.create(user.currentGroup!!, item).onSuccess {
-                dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
-            }.onFailure {
-                println("Error on CREATE PANTRY: ${it.message}")
-                dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
+            val currentGroupId = user.currentGroup
+            if(currentGroupId != null) {
+                api.create(currentGroupId, item).onSuccess {
+                    println("Successfully created a new item: $item for household ${user.currentGroup!!}")
+                    fetchPantryItems()
+                    dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
+                }.onFailure {
+                    println("Error on CREATE PANTRY: ${it.message}")
+                    dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
+                }
             }
+            else{
+                println("No groupId is available")
+            }
+
         }
         return state
 
     }
     fun fetchPantryItems() {
         scope.launch {
-            api.get(user.currentGroup!!).onSuccess {
-                dispatch(PantryAction.PantryItemsFetched(it))
-            }.onFailure {
-                println("Error on GET PANTRY: ${it.message}")
+            val currentGroupId = user.currentGroup
+            if(currentGroupId != null) {
+                api.get(currentGroupId).onSuccess {
+                    println("Successfully fetched pantry items: $it")
+                    dispatch(PantryAction.PantryItemsFetched(it))
+                }.onFailure {
+                    println("Error on GET PANTRY: ${it.message}")
+                }
             }
+            else{
+                print("Group not found!")
+            }
+
         }
         return
     }

@@ -1,11 +1,6 @@
 package login
 
 import common.Store
-import home.HomeAction
-import home.HomeEffect
-import home.HomeRoute
-import home.HomeState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class LoginState(
@@ -75,8 +70,11 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
         scope.launch {
             api.register(username, email,password)
                 .onSuccess {
-                    dispatch(LoginAction.AuthSuccess(username, email))
-                    emit(LoginEffect.NavigateToHome)
+                    api.login(email, password).onSuccess {
+                        dispatch(LoginAction.AuthSuccess(it.user.name, it.user.email))
+                        emit(LoginEffect.NavigateToHome)
+                    }.onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
+
                 }
                 .onFailure { dispatch(LoginAction.AuthFailed(it.toString())) }
         }
@@ -95,6 +93,6 @@ class LoginStore: Store<LoginState, LoginAction, LoginEffect>(LoginState()) {
             if(success)
                 emit(LoginEffect.NavigateToHome)
         }
-        return state
+        return state.copy(username = username, email = email)
     }
 }

@@ -35,17 +35,21 @@ fun PantryItemForm(
 )
 {
     var item by remember { mutableStateOf(initialItem) }
+    var name by remember { mutableStateOf(initialItem.name) }
+    var unit by remember { mutableStateOf(initialItem.unit) }
+    var quantityText by remember { mutableStateOf(initialItem.quantity.toString()) }
+    var minimumQuantityText by remember { mutableStateOf(initialItem.minimumQuantity.toString()) }
+    var category by remember { mutableStateOf(initialItem.category) }
+    var expanded by remember { mutableStateOf(false) }
 
     val categories = ShelfType.entries
 
     // Validation
-    var quantityText = item.quantity.toString()
-    var minimumQuantityText = item.quantity.toString()
-    val isNameValid = item.name.trim().length >= 3
-    val quantity = quantityText.toDoubleOrNull() ?: -1.0
-    val isQuantityValid = quantity >= 0.0
-    val minimumQuantity = minimumQuantityText.toDoubleOrNull() ?: 1.0
-    val isMinQuantityValid = minimumQuantity >= 0.0
+    val isNameValid = name.trim().length >= 3
+    val quantity = quantityText.toIntOrNull() ?: -1
+    val isQuantityValid = quantity >= 0
+    val minimumQuantity = minimumQuantityText.toIntOrNull() ?: 1
+    val isMinQuantityValid = minimumQuantity >= 0
     val isFormValid = isNameValid && isQuantityValid
 
     Column(modifier = Modifier
@@ -59,20 +63,20 @@ fun PantryItemForm(
 
 
             TextField(
-                value = item.name,
-                onValueChange = { item.name = it },
+                value = name,
+                onValueChange = { name = it },
                 label = {  Row{
                     Text("Name"); Text("*", color = MaterialTheme.colorScheme.error)} },
-                isError = !isNameValid && item.name.isNotEmpty(),
+                isError = !isNameValid && name.isNotEmpty(),
                 singleLine = true
             )
-            if (!isNameValid && item.name.isNotEmpty()) {
+            if (!isNameValid && name.isNotEmpty()) {
                 Text("Name must be at least 3 characters", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
             }
 
             TextField(
-                value = item.unit,
-                onValueChange = { item.unit = it },
+                value = unit,
+                onValueChange = { unit = it },
                 label = { Text("Unit") },
                 singleLine = true
             )
@@ -106,7 +110,7 @@ fun PantryItemForm(
             var expanded by remember { mutableStateOf(false) }
             Box {
                 TextField(
-                    value = item.category.toString(),
+                    value = category.toString(),
                     onValueChange = { },
                     label = { Text("Category") },
                     readOnly = true,
@@ -124,7 +128,7 @@ fun PantryItemForm(
                     categories.forEach { cat ->
                         DropdownMenuItem(
                             onClick = {
-                                item.category = cat.toString()
+                                category = cat.toString()
                                 expanded = false
                             },
                             text = { Text(cat.toString()) },
@@ -152,7 +156,15 @@ fun PantryItemForm(
                 .clip(ButtonDefaults.shape)
                 .background(AppTheme.brushes.primaryGradient),
             onClick = {
-                onSubmit(item)
+                println("$name, $unit, $category, $quantity, $minimumQuantity, 1")
+                onSubmit(PantryItemDTO(
+                    name = name,
+                    unit = unit,
+                    category = category,
+                    quantity = quantity,
+                    minimumQuantity = minimumQuantity,
+                    groupId = 1,
+                ))
             },
             enabled = isFormValid,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)

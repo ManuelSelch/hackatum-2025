@@ -59,7 +59,13 @@ class HomeStore(val user: UserService): Store<HomeState, HomeAction, HomeEffect>
             is HomeAction.HouseholdCreated -> state.copy(loading = false, error = null, route = HomeRoute.Dashboard)
             is HomeAction.Failed -> state.copy(loading = false, error = action.error)
             is HomeAction.GroupsFetched -> {
-                state.copy(groups = action.groups, current = state.current ?: action.groups.firstOrNull(), loading = false, error = null)
+                user.currentGroup = action.groups.firstOrNull()?.id
+                state.copy(
+                    groups = action.groups,
+                    current = state.current ?: action.groups.firstOrNull(),
+                    loading = false, error = null);
+
+
             }
 
             is HomeAction.InviteTapped -> state.copy(route = HomeRoute.Invite)
