@@ -15,7 +15,7 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import models.ErrorDTO
 
-const val URL = "http://0.0.0.0:8080"
+const val URL = "https://hackatum.dev.manuelselch.de"
 
 data class ApiException(
     val statusCode: Int,
