@@ -16,8 +16,8 @@ class PantryAPI: API() {
              minimumQuantity = item.minimumQuantity,
          ))
     }
-    suspend fun get(groupId: Long, type: ShelfType): Result<List<PantryItemDTO>> {
-        return get("/pantry", request = mapOf("groupID" to "$groupId", "outOfStock" to "false"))
+    suspend fun get(groupId: Long): Result<List<PantryItemDTO>> {
+        return get("/pantry/categorized", request = mapOf("groupID" to "$groupId"))
     }
 
     suspend fun update(groupId: Long, item: PantryItemDTO): Result<PantryItemDTO> {
