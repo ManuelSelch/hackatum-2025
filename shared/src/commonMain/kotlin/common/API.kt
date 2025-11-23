@@ -13,13 +13,13 @@ import io.ktor.http.headers
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import models.ErrorResponse
+import models.ErrorDTO
 
 const val URL = "http://0.0.0.0:8080"
 
 data class ApiException(
     val statusCode: Int,
-    val error: ErrorResponse? = null
+    val error: ErrorDTO? = null
 ) : Exception("HTTP $statusCode: ${error?.error}")
 
 open class API {
@@ -48,7 +48,7 @@ open class API {
 
             // parse error response
             if (!response.status.isSuccess()) {
-                val errorBody = try { response.body<ErrorResponse>() } catch (e: Exception) { null }
+                val errorBody = try { response.body<ErrorDTO>() } catch (e: Exception) { null }
                 return Result.failure(ApiException(response.status.value, errorBody))
             }
 
@@ -75,7 +75,7 @@ open class API {
 
             // parse error response
             if (!response.status.isSuccess()) {
-                val errorBody = try { response.body<ErrorResponse>() } catch (e: Exception) { null }
+                val errorBody = try { response.body<ErrorDTO>() } catch (e: Exception) { null }
                 return Result.failure(ApiException(response.status.value, errorBody))
             }
 

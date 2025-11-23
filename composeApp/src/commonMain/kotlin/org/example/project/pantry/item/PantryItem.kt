@@ -25,7 +25,7 @@ import org.example.project.theme.icons.Misc
 fun PantryItemCard(
     name: String,
     unit: String?,
-    quantity: Double,
+    quantity: Int,
     category: String?,
     minimumQuantity: Int?,
     onClick: () -> Unit,
@@ -44,7 +44,7 @@ fun PantryItemCard(
             Icon(if(category == "Food") Food else if(category == "Drinks") Drink else Misc, contentDescription = "food_icon", Modifier.size(48.dp), tint = MaterialTheme.colorScheme.primary)
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 // Color Indicators for how much is left compared to wanted amount.
-                Text("${quantity.pretty()} ${unit ?: ""}",  fontSize = TEXT_REG.sp,
+                Text("$quantity ${unit ?: ""}",  fontSize = TEXT_REG.sp,
                     color =
                     if(minimumQuantity != null && quantity <= minimumQuantity) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.primary.copy(0.8f))
@@ -59,10 +59,4 @@ fun PantryItemCard(
     }
 }
 
-fun Double.pretty(): String =
-    if (this % 1.0 == 0.0) {
-        this.toInt().toString()
-    } else {
-        this.toString()
-    }
 

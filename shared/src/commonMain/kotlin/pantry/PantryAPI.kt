@@ -1,20 +1,22 @@
 package pantry
 
 import common.API
-import models.PantryItemRequest
-import models.PantryItemResponse
+import models.PantryItemDTO
 
 class PantryAPI: API() {
 
-    suspend fun create(groupId: Long, item: PantryItem): Result<PantryItemResponse> {
-         return post("/pantry", PantryItemRequest(
+    suspend fun create(groupId: Long, item: PantryItemDTO): Result<PantryItemDTO> {
+         return post("/pantry", PantryItemDTO(
              groupId,
              name = item.name,
-             quantity = item.quantity.toInt(),
-             category = item.category.toString(),
-             unit = item.unit?: "",
-             minimumQuantity = item.minimumQuantity?: 0,
+             quantity = item.quantity,
+             category = item.category,
+             unit = item.unit,
+             minimumQuantity = item.minimumQuantity,
          ))
+    }
+    suspend fun get(groupId: Long): Result<List<PantryItemDTO>> {
+        return get("/pantry", request = mapOf("groupID" to "$groupId", "outOfStock" to "false"))
     }
     /*
     suspend fun update(): Result<PantryItemResponse> {
