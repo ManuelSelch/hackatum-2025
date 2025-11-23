@@ -1,14 +1,14 @@
 package pantry
 
 import common.API
-import models.PantryItemCreateRequest
+import models.PantryItemRequest
 import models.PantryItemResponse
 
 class PantryAPI: API() {
 
     suspend fun create(groupId: Long, item: PantryItem): Result<PantryItemResponse> {
-         return post("/pantry", PantryItemCreateRequest(
-             1,
+         return post("/pantry", PantryItemRequest(
+             groupId,
              name = item.name,
              quantity = item.quantity.toInt(),
              category = item.category.toString(),
