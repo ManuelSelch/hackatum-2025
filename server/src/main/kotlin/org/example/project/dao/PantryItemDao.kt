@@ -33,6 +33,22 @@ class PantryItemDao() {
         )
     }
 
+    fun getPantryItem(groupID: Long, name: String): PantryItem? = transaction {
+        PantryItemsTable.selectAll().where {
+            (PantryItemsTable.groupID eq groupID) and
+            (PantryItemsTable.name eq name)
+        }.singleOrNull()?.let {
+            PantryItem(
+                groupID = it[PantryItemsTable.groupID].value,
+                name = it[PantryItemsTable.name],
+                unit = it[PantryItemsTable.unit],
+                quantity = it[PantryItemsTable.quantity],
+                minimumQuantity = it[PantryItemsTable.minimumQuantity],
+                category = it[PantryItemsTable.category]
+            )
+        }
+    }
+
     fun getPantryItemsByGroupID(groupID: Long): Result<List<PantryItem>> = transaction {
         runCatching {
             GroupEntity.findById(groupID) ?: throw IllegalArgumentException("GroupID is invalid. No matching Group found!")
