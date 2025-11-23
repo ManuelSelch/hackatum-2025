@@ -94,7 +94,7 @@ fun HomeView(
                 )
                 FlowRow(
                     Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start)
                 ) {
                     DebtUser("Manuel", 123.35)
                     DebtUser("Yorick S", 409.56)

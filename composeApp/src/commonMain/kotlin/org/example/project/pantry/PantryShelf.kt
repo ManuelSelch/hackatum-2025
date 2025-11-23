@@ -86,6 +86,7 @@ fun PantryShelf(
         ) {
             Text("Add Pantry Item", color = MaterialTheme.colorScheme.onPrimary)
         }
+        Spacer(Modifier.height(12.dp))
     }
 }
 
