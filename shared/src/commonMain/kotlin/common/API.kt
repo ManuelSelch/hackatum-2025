@@ -36,6 +36,11 @@ open class API {
             })
         }
     }
+
+    fun clearToken() {
+        token = ""
+    }
+
     suspend inline fun <reified I, reified O> post(endpoint: String, request: I): Result<O> {
         return try {
             println("POST $endpoint with token $token")

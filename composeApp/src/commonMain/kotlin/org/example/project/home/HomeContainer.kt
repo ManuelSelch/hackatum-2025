@@ -48,6 +48,7 @@ fun HomeContainer(store: HomeStore ) {
                         { store.dispatch((HomeAction.InviteTapped)) },
                         { store.dispatch(HomeAction.RefreshTapped) },
                         { store.dispatch(HomeAction.PantryTapped) },
+                        { store.dispatch(HomeAction.SettingsTapped) },
                     )
 
                     HomeRoute.CreateHouseHold -> CreateHouseholdView(
@@ -63,6 +64,11 @@ fun HomeContainer(store: HomeStore ) {
                     HomeRoute.Invite -> InviteView(
                         state.current?.id,
                         backTapped = { store.dispatch(HomeAction.BackTapped) }
+                    )
+
+                    HomeRoute.Settings -> SettingsView(
+                        {},
+                        {}
                     )
                 }
             }

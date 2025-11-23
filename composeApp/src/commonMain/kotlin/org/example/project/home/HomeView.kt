@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.sp
 import models.GroupResponse
 import org.example.project.home.components.*
 import org.example.project.theme.TEXT_REG
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeView(
@@ -24,19 +23,26 @@ fun HomeView(
     inviteTapped: () -> Unit,
     refreshTapped: () -> Unit,
     pantryTapped: () -> Unit,
+    settingsTapped: () -> Unit
 ) {
     Column(
         Modifier.fillMaxSize()
     )
     {
-        // household Selector
-        HouseDropdown(
-            items = groups,
-            label = "Select a House",
-            current,
-            groupSelected,
-            createHouseholdTapped
-        )
+        Row {
+            // household Selector
+            HouseDropdown(
+                items = groups,
+                label = "Select a House",
+                current,
+                groupSelected,
+                createHouseholdTapped
+            )
+
+            Button(settingsTapped) {
+                Text("S")
+            }
+        }
 
         // join & invite
         Row {
@@ -124,18 +130,4 @@ fun HomeView(
 
         }
     }
-}
-
-@Composable
-@Preview
-fun HomePreview() {
-    HomeView(
-        emptyList(),
-        null,
-        {},
-        {},
-        {}, {},
-        {},
-        {}
-    )
 }

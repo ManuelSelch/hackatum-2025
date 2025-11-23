@@ -18,4 +18,8 @@ class HomeAPI: API() {
     suspend fun join(groupId: Long): Result<GroupResponse> {
         return post("/group/join", GroupJoinRequest(groupId))
     }
+
+    suspend fun saveProfile() {
+
+    }
 }
