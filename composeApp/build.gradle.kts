@@ -43,6 +43,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+            implementation("io.github.alexzhirkevich:qrose:1.0.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
