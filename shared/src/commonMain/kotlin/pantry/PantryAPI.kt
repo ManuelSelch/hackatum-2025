@@ -17,7 +17,7 @@ class PantryAPI: API() {
          ))
     }
     suspend fun get(groupId: Long): Result<List<PantryItemDTO>> {
-        return get("/pantry/categorized", request = mapOf("groupID" to "$groupId"))
+        return get("/pantry", request = mapOf("groupID" to "$groupId"))
     }
 
     suspend fun update(groupId: Long, item: PantryItemDTO): Result<PantryItemDTO> {

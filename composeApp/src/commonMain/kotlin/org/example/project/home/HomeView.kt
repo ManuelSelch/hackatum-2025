@@ -94,7 +94,7 @@ fun HomeView(
                 )
                 FlowRow(
                     Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
                 ) {
                     DebtUser("Manuel", 123.35)
                     DebtUser("Yorick S", 409.56)
@@ -108,7 +108,7 @@ fun HomeView(
             )
             {
                 Column(Modifier.wrapContentHeight()) {
-                    Text("Running Low", fontSize = TEXT_REG.sp)
+                   //    Text("Running Low", fontSize = TEXT_REG.sp)
 
                     FlowRow(
                         Modifier.fillMaxWidth(0.5f),
@@ -119,7 +119,7 @@ fun HomeView(
                     }
                 }
                 Column(Modifier.wrapContentHeight()) {
-                    Text("To Buy", fontSize = TEXT_REG.sp)
+                    //Text("To Buy", fontSize = TEXT_REG.sp)
                     FlowRow(
                         Modifier.fillMaxWidth(0.5f),
                         verticalArrangement = Arrangement.spacedBy(4.dp),
