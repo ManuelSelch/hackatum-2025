@@ -11,6 +11,7 @@ import io.ktor.server.routing.get
 import models.PantryItemCreateRequest
 import org.example.project.dao.PantryItemDao
 import org.example.project.domain.models.toResponse
+import org.example.project.services.PantryItemService
 
 fun Route.pantryRoutes(pantryDao: PantryItemDao) {
     authenticate("auth-jwt") {
@@ -38,7 +39,12 @@ fun Route.pantryRoutes(pantryDao: PantryItemDao) {
                     return@get
                 }
 
-                val items = pantryDao.getPantryItemsByGroupID(groupID)
+                val outOfStock = call.parameters["outOfStock"]?.toBooleanStrictOrNull() ?: false
+                val items = if (outOfStock) {
+                    pantryDao.getPantryItemsByGroupID(groupID)
+                } else {
+                    PantryItemService(pantryDao).getPantryItemsOutOfStock(groupID)
+                }
 
                 items
                     .onFailure { call.respond(HttpStatusCode.BadRequest, it.message?: "Unknown error") }
