@@ -1,5 +1,6 @@
 package common
 
+import home.HomeAction
 import home.HomeEffect
 import home.HomeStore
 import login.LoginAction
@@ -37,7 +38,10 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
     init {
         login.listen {
             when (it) {
-                is LoginEffect.NavigateToHome -> dispatch(AppAction.Navigate(AppRoute.Home))
+                is LoginEffect.NavigateToHome -> {
+                    home.dispatch(HomeAction.RefreshTapped)
+                    dispatch(AppAction.Navigate(AppRoute.Home))
+                }
             }
         }
 
