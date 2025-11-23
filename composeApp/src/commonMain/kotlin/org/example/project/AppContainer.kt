@@ -14,7 +14,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun AppContainer() {
+fun AppContainer(scanner: @Composable (callback: (String) -> Unit) -> Unit) {
     val app = remember { AppStore() }
 
     val state by app.state.collectAsState()
@@ -22,7 +22,7 @@ fun AppContainer() {
     Column {
         when(state.route) {
             AppRoute.Login -> LoginContainer(app.login)
-            AppRoute.Home -> HomeContainer(app.home)
+            AppRoute.Home -> HomeContainer(app.home, scanner)
             AppRoute.Pantry -> PantryContainer(app.pantry)
         }
     }

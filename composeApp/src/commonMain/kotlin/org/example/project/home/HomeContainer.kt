@@ -21,7 +21,7 @@ import org.example.project.login.SettingsView
 import org.example.project.theme.AppColors.AppTheme
 
 @Composable
-fun HomeContainer(store: HomeStore ) {
+fun HomeContainer(store: HomeStore, scanner: @Composable (callback: (String) -> Unit) -> Unit) {
     val state by store.state.collectAsState()
 
     AppTheme() {
@@ -59,7 +59,8 @@ fun HomeContainer(store: HomeStore ) {
 
                     HomeRoute.Join -> JoinView(
                         { store.dispatch(HomeAction.Join(it)) },
-                        backTapped = { store.dispatch(HomeAction.BackTapped) }
+                        backTapped = { store.dispatch(HomeAction.BackTapped) },
+                        scanner
                     )
 
                     HomeRoute.Invite -> InviteView(

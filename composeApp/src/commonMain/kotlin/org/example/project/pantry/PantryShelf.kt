@@ -27,7 +27,7 @@ import pantry.ShelfType
 fun PantryShelf(
     shelfType: ShelfType,
     onBack: () -> Unit,
-    updateTapped: () -> Unit,
+    updateTapped: (PantryItemDTO) -> Unit,
     createTapped: () -> Unit,
     pantryItems: List<PantryItemDTO>,
 )
@@ -74,9 +74,8 @@ fun PantryShelf(
                             item.unit,
                             item.quantity,
                             item.category,
-                            item.minimumQuantity,
-                            updateTapped
-                        )
+                            item.minimumQuantity
+                        ) { updateTapped(item) }
                     }
                 }
 

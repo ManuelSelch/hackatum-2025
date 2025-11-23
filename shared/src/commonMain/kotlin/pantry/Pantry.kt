@@ -7,7 +7,6 @@ import models.PantryItemDTO
 import pantry.PantryRoute.*
 
 
-
 data class PantryState(
     val route: PantryRoute = View,
     val pantryItems: List<PantryItemDTO>
@@ -31,15 +30,19 @@ sealed class PantryAction {
 
     data object GoToCreatePantryItem : PantryAction()
 
-    data object GoToUpdatePantryItem : PantryAction()
+    data class GoToUpdatePantryItem(val item: PantryItemDTO) : PantryAction()
 
     data class CreatePantryItem(val item: PantryItemDTO) : PantryAction()
     data class UpdatePantryItem(val item: PantryItemDTO) : PantryAction()
 
     data class PantryItemsFetched(val items: List<PantryItemDTO>): PantryAction()
+
+    data object HomeTapped : PantryAction()
+
 }
 
 sealed class PantryEffect {
+    data object NavigateToHome: PantryEffect()
 }
 class PantryStore(val user: UserService): Store<PantryState, PantryAction, PantryEffect>(PantryState(pantryItems = listOf())) {
     val api = PantryAPI()
@@ -48,14 +51,12 @@ class PantryStore(val user: UserService): Store<PantryState, PantryAction, Pantr
         return when (action) {
             is PantryAction.GoToShelf ->{ fetchPantryItems(); state.copy(route = Shelf(action.type))}
             is PantryAction.GoToView -> state.copy(route = View)
-            PantryAction.GoToCreatePantryItem -> state.copy(route = Create)
-            PantryAction.GoToUpdatePantryItem -> state;
-            is PantryAction.CreatePantryItem -> createPantryItem(state, action.item);
-            is PantryAction.UpdatePantryItem -> {
-                //api.update()
-                state;
-            };
+            is PantryAction.GoToCreatePantryItem -> state.copy(route = Create)
+            is PantryAction.GoToUpdatePantryItem -> state.copy(route = Update(action.item));
+            is PantryAction.CreatePantryItem -> createPantryItem(state, action.item)
+            is PantryAction.UpdatePantryItem -> updatePantryItem(state, action.item)
             is PantryAction.PantryItemsFetched -> state.copy(pantryItems = action.items)
+            is PantryAction.HomeTapped -> { emit(PantryEffect.NavigateToHome); state}
         }
     }
     fun createPantryItem(state: PantryState, item: PantryItemDTO): PantryState {
@@ -74,6 +75,28 @@ class PantryStore(val user: UserService): Store<PantryState, PantryAction, Pantr
             else{
                 println("No groupId is available")
             }
+
+        }
+        return state
+
+    }
+    fun updatePantryItem(state: PantryState, item: PantryItemDTO): PantryState {
+        scope.launch{
+            val currentGroupId = user.currentGroup
+            if(currentGroupId != null) {
+                api.update(currentGroupId, item).onSuccess {
+                    println("Successfully updated a new item: $item for household ${item.groupId}")
+                    fetchPantryItems()
+                    dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
+                }.onFailure {
+                    println("Error on UPDATE PANTRY: ${it.message}")
+                    dispatch(PantryAction.GoToShelf(enumValueOf<ShelfType>(item.category)))
+                }
+            }
+            else{
+                println("No groupId is available")
+            }
+
 
         }
         return state

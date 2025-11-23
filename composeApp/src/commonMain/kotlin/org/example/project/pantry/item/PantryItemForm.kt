@@ -45,12 +45,13 @@ fun PantryItemForm(
     val categories = ShelfType.entries
 
     // Validation
+    val isUnitValid = unit.trim().isNotEmpty()
     val isNameValid = name.trim().length >= 3
     val quantity = quantityText.toIntOrNull() ?: -1
     val isQuantityValid = quantity >= 0
     val minimumQuantity = minimumQuantityText.toIntOrNull() ?: 1
     val isMinQuantityValid = minimumQuantity >= 0
-    val isFormValid = isNameValid && isQuantityValid
+    val isFormValid = isNameValid && isQuantityValid && isUnitValid && isMinQuantityValid
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -77,9 +78,13 @@ fun PantryItemForm(
             TextField(
                 value = unit,
                 onValueChange = { unit = it },
-                label = { Text("Unit") },
+                label = { Row{Text("Unit"); Text("*", color = MaterialTheme.colorScheme.error)} },
+                isError = !isUnitValid && unit.isNotEmpty(),
                 singleLine = true
             )
+            if (!isUnitValid && unit.isNotEmpty()){
+                Text("Quantity must be >= 0", color = MaterialTheme.colorScheme.error, fontSize = TEXT_REG.sp)
+            }
 
             TextField(
                 value = quantityText,
@@ -97,7 +102,7 @@ fun PantryItemForm(
             TextField(
                 value = minimumQuantityText,
                 onValueChange = { minimumQuantityText = it },
-                label = { Text("Minimum Quantity") },
+                label = { Row{Text("Minimum Quantity"); Text("*", color = MaterialTheme.colorScheme.error)} },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = !isMinQuantityValid && minimumQuantityText.isNotEmpty(),
                 singleLine = true
@@ -156,7 +161,6 @@ fun PantryItemForm(
                 .clip(ButtonDefaults.shape)
                 .background(AppTheme.brushes.primaryGradient),
             onClick = {
-                println("$name, $unit, $category, $quantity, $minimumQuantity, 1")
                 onSubmit(PantryItemDTO(
                     name = name,
                     unit = unit,

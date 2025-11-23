@@ -4,14 +4,14 @@ import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        // MainViewControllerKt.MainViewController()
         
-        /*MainKt.ComposeEntryPointWithUIViewController(createUIViewController: { () -> UIViewController in
-            let swiftUIView = VStack {
-                Demo()
-            }
-            return UIHostingController(rootView: swiftUIView)
-        })*/
+        MainKt.ComposeEntryPointWithUIViewController { callback in
+            let root = ScannerView(onScanned: { qr in
+                callback(qr)
+            })
+            return UIHostingController(rootView: root)
+        }
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

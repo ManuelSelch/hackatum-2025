@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
@@ -21,6 +22,6 @@ import kotlinproject.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
-    AppContainer()
+fun App(scanner: @Composable () -> Unit) {
+    AppContainer {}
 }

@@ -20,7 +20,7 @@ fun AddPantryItemScreen(
         Surface (Modifier.background(color = MaterialTheme.colorScheme.background)){
             PantryItemForm(
                 initialItem = PantryItemDTO(
-                    groupId = 1,
+                    groupId = 0,
                     name = "",
                     unit = "",
                     quantity = 0,
