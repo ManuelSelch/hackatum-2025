@@ -4,9 +4,13 @@ import io.ktor.http.HttpStatusCode
 import org.example.project.database.PantryItemsTable
 import org.example.project.domain.entities.GroupEntity
 import org.example.project.domain.models.PantryItem
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class PantryItemDao() {
     fun create(groupID: Long, name: String, unit: String, quantity: Int, minimumQuantity: Int, category: String): PantryItem = transaction {
@@ -42,6 +46,41 @@ class PantryItemDao() {
                     minimumQuantity = it[PantryItemsTable.minimumQuantity],
                     category = it[PantryItemsTable.category]
                 )
+            }
+        }
+    }
+
+    fun update(newItem: PantryItem): Result<PantryItem> = transaction {
+        runCatching {
+            val updatedRows = PantryItemsTable.update({
+                (PantryItemsTable.groupID eq newItem.groupID) and
+                (PantryItemsTable.name eq newItem.name)
+            }) {
+                it[unit] = newItem.unit
+                it[quantity] = newItem.quantity
+                it[minimumQuantity] = newItem.minimumQuantity
+                it[category] = newItem.category
+            }
+
+            if (updatedRows > 0) {
+                newItem
+            } else {
+                throw IllegalArgumentException("No matching PantryItem found!")
+            }
+        }
+    }
+
+    fun delete(item: PantryItem): Result<Boolean> = transaction {
+        runCatching {
+            val nDelted = PantryItemsTable.deleteWhere {
+                (PantryItemsTable.groupID eq item.groupID) and
+                (PantryItemsTable.name eq item.name)
+            }
+
+            if (nDelted > 0) {
+                true
+            } else {
+                throw IllegalArgumentException("No matching PantryItem found!")
             }
         }
     }

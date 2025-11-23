@@ -56,13 +56,5 @@ data class GroupListResponse(
 // PANTRY
 // - /pantry
 // request
-@Serializable
-data class PantryItemCreateRequest(
-    val groupId: Long,
-    val name: String,
-    val quantity: Int,
-    val category: String,
-    val unit: String,
-    val minimumQuantity: Int,
-)
+
 // response - see PantryItemResponse

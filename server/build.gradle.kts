@@ -41,9 +41,12 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.54.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.54.0")
 
-    // Ktor OpenAPI + Swagger UI (Option A)
+    // Ktor OpenAPI + Swagger UI
     implementation("io.ktor:ktor-server-openapi-jvm:3.3.1")
     implementation("io.ktor:ktor-server-swagger-jvm:3.3.1")
+    implementation("io.ktor:ktor-server-core:3.3.1")
+    implementation("io.ktor:ktor-server-openapi:3.3.1")
+    implementation("io.ktor:ktor-server-core:3.3.1")
 
     // Testing
     testImplementation(libs.ktor.serverTestHost)
