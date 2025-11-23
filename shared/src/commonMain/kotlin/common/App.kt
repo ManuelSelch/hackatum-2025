@@ -32,19 +32,15 @@ class AppStore(): Store<AppState, AppAction, AppEffect>(AppState()) {
     val pantry = PantryStore()
 
     init {
-        scope.launch {
-            login.effects.collect {
-                when (it) {
-                    is LoginEffect.NavigateToHome -> dispatch(AppAction.Navigate(AppRoute.Home))
-                }
+        login.listen {
+            when (it) {
+                is LoginEffect.NavigateToHome -> dispatch(AppAction.Navigate(AppRoute.Home))
             }
         }
 
-        scope.launch {
-            home.effects.collect {
-                when (it) {
-                    is HomeEffect.NavigateToPantry -> dispatch(AppAction.Navigate(AppRoute.Pantry))
-                }
+        home.listen {
+            when (it) {
+                is HomeEffect.NavigateToPantry -> dispatch(AppAction.Navigate(AppRoute.Pantry))
             }
         }
     }

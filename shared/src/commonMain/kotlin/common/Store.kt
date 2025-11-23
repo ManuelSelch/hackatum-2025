@@ -1,5 +1,6 @@
 package common
 
+import home.HomeEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,6 +26,12 @@ abstract class Store<State, Action, Effect>(
     fun emit(effect: Effect) {
         scope.launch {
             effects.emit(effect)
+        }
+    }
+
+    fun listen(callback: (Effect) -> Unit) {
+        scope.launch {
+            effects.collect { callback(it) }
         }
     }
 
