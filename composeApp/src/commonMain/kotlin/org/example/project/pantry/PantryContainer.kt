@@ -23,7 +23,7 @@ fun PantryContainer(store: PantryStore) {
             is PantryRoute.Shelf -> PantryShelf(
                 shelfType = route.type,
                 createTapped = {store.dispatch(GoToCreatePantryItem)},
-                updateTapped = {store.dispatch(GoToUpdatePantryItem)},
+                updateTapped = {store.dispatch(GoToUpdatePantryItem(it))},
                 onBack = { store.dispatch(GoToView) },
                 pantryItems = state.pantryItems,
             )
@@ -32,6 +32,7 @@ fun PantryContainer(store: PantryStore) {
                 { store.dispatch(GoToShelf(ShelfType.Food)) },
                 { store.dispatch(GoToShelf(ShelfType.Drinks)) },
                 { store.dispatch(GoToShelf(ShelfType.Miscellaneous)) },
+                onBack = {store.dispatch(HomeTapped)},
                 pantryItems = state.pantryItems,
             )
 
