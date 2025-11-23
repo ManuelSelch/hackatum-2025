@@ -58,3 +58,8 @@ data class GroupListResponse(
 // request
 
 // response - see PantryItemResponse
+
+@Serializable
+data class PantryItemsCategorizedResponse(
+    val items: Map<String, List<PantryItemDTO>>
+)
