@@ -1,10 +1,10 @@
 package org.example.project.dao
 
-import org.example.project.database.Expense
 import org.example.project.database.UsersTable
 import org.example.project.domain.entities.ExpenseEntity
 import org.example.project.domain.entities.GroupEntity
 import org.example.project.domain.entities.UserEntity
+import org.example.project.domain.models.Expense
 import org.example.project.domain.models.Group
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -71,7 +71,7 @@ class GroupDao() {
             }
 
             val expense = ExpenseEntity.new {
-                this.groupId = group.id
+                this.groupID = group.id
                 this.amount = amount.toBigDecimal()
                 this.payer = payer
                 this.description = description
