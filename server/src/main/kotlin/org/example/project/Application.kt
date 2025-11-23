@@ -1,5 +1,6 @@
 package org.example.project
 
+import io.ktor.http.parseAndSortContentTypeHeader
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -12,11 +13,13 @@ import org.example.project.routes.authRoutes
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.example.project.dao.GroupDao
+import org.example.project.dao.PantryItemDao
 import org.example.project.dao.UserDao
 import org.example.project.plugins.configureDatabase
 import org.example.project.plugins.configureSerialization
 import org.example.project.plugins.configureTestDatabase
 import org.example.project.routes.groupRoutes
+import org.example.project.routes.pantryRoutes
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -37,9 +40,11 @@ fun Application.module(testing: Boolean = false) {
     // init daos
     val users = UserDao()
     val groups = GroupDao()
+    val pantry = PantryItemDao()
 
     routing {
         authRoutes(users, jwt)
         groupRoutes(users, groups)
+        pantryRoutes(pantry)
     }
 }

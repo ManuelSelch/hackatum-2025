@@ -1,0 +1,17 @@
+POST http://localhost:8080/pantry
+Content-Type: application/json
+Authorization: Bearer {{ authToken }}
+
+{
+  "groupId": 1,
+  "name": "Banana",
+  "unit": "stk",
+  "quantity": 10,
+  "minimumQuantity": 2,
+  "category": "Fruits"
+}
+
+### GET Items by groupID
+GET http://localhost:8080/pantry?groupID=1
+Content-Type: application/json
+Authorization: Bearer {{ authToken }}

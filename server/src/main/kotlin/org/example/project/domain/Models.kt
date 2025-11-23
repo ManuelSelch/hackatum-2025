@@ -37,7 +37,6 @@ data class PantryItem(
 )
 
 fun PantryItem.toResponse() = PantryItemResponse(
-    id = id,
     groupId = groupId,
     name = name,
     unit = unit,
