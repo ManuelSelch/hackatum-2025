@@ -21,7 +21,7 @@ import org.example.project.login.SettingsView
 import org.example.project.theme.AppColors.AppTheme
 
 @Composable
-fun HomeContainer(store: HomeStore, scanner: @Composable () -> Unit) {
+fun HomeContainer(store: HomeStore, scanner: @Composable (callback: (String) -> Unit) -> Unit) {
     val state by store.state.collectAsState()
 
     AppTheme() {

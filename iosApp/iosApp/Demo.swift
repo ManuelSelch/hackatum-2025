@@ -2,24 +2,9 @@ import SwiftUI
 import AVFoundation
 import Vision
 
-struct Demo: View {
-    @State private var scannedString: String = "Scan a QR code or barcode"
-    
-    var body: some View {
-        VStack {
-            Text(scannedString)
-                
-            ScannerView(scannedString: $scannedString)
-                .edgesIgnoringSafeArea(.all)
-        }
-        .padding()
-    }
-}
-
 struct ScannerView: UIViewControllerRepresentable {
 
-    @Binding var scannedString: String
-    
+    let onScanned: (String) -> Void
     let captureSession = AVCaptureSession()
     
     func makeUIViewController(context: Context) -> UIViewController {
@@ -70,7 +55,7 @@ struct ScannerView: UIViewControllerRepresentable {
             
             if let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
                let value = object.stringValue {
-                parent.scannedString = value
+                parent.onScanned(value)
             }
         }
     }

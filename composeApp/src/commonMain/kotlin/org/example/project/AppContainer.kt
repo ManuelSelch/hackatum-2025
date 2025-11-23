@@ -14,7 +14,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun AppContainer(scanner: @Composable () -> Unit) {
+fun AppContainer(scanner: @Composable (callback: (String) -> Unit) -> Unit) {
     val app = remember { AppStore() }
 
     val state by app.state.collectAsState()
