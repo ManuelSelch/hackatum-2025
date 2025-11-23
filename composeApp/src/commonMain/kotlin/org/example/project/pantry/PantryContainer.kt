@@ -38,7 +38,6 @@ fun PantryContainer(store: PantryStore) {
 
             is PantryRoute.Create -> AddPantryItemScreen(
                 onCreate = { store.dispatch(CreatePantryItem(it)) },
-
             )
             is PantryRoute.Update -> UpdatePantryItemScreen(
                 item = route.item,

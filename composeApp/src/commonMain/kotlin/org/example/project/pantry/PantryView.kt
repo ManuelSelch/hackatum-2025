@@ -33,13 +33,10 @@ fun PantryView(
     pantryItems: List<PantryItemDTO>,
 
     ) {
-    AppTheme(darkTheme = false) {
-        Surface {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-
+                    .safeContentPadding()
             )
             {
                 // Top title section (25% height)
@@ -84,8 +81,6 @@ fun PantryView(
                         .fillMaxWidth()
                 )
             }
-        }
-    }
 }
 
 @Composable

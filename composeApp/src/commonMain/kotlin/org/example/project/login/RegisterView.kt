@@ -1,20 +1,13 @@
 package org.example.project.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.example.project.theme.TEXT_L
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -30,7 +23,7 @@ fun RegisterView(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(text = "Register", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Register", fontSize = TEXT_L.sp)
 
         TextField(
             value = username,
@@ -58,21 +51,20 @@ fun RegisterView(
 
         Button(
             onClick = registerTapped,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Register")
+            Text(text = "Sign Up")
         }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(text = "already have an account?")
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = loginTapped) {
-                Text(text = "Login")
+        Spacer(modifier = Modifier.width(8.dp))
+        Row ( horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("Already have an account?")
+            Button(onClick = loginTapped, Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
+                Text("Log In")
             }
         }
+
+
 
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import models.PantryItemDTO
 import org.example.project.pantry.item.PantryItemCard
-import org.example.project.theme.AppColors.AppTheme
 import org.example.project.theme.AppTheme
 import org.example.project.theme.TEXT_L
 import org.example.project.theme.icons.Arrow_drop_down
@@ -32,14 +31,11 @@ fun PantryShelf(
     pantryItems: List<PantryItemDTO>,
 )
 {
-    AppTheme{
-        Surface(Modifier .background(color = MaterialTheme.colorScheme.background)){
-            val items = pantryItems
-
+    val items = pantryItems
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+
 
             )
             {
@@ -92,9 +88,6 @@ fun PantryShelf(
                     Text("Add Pantry Item", color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
-        }
-
-    }
 }
 
 

@@ -2,6 +2,8 @@ package org.example.project.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,8 +14,14 @@ import androidx.compose.ui.unit.sp
 import models.GroupDTO
 import org.example.project.home.components.*
 import org.example.project.theme.TEXT_REG
+import org.example.project.theme.icons.Refresh
+import org.example.project.theme.icons.SettingsGear
+import org.example.project.theme.icons.add_household
+import org.example.project.theme.icons.invite_household
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
+@Preview
 fun HomeView(
     groups: List<GroupDTO>,
     current: GroupDTO?,
@@ -24,7 +32,8 @@ fun HomeView(
     refreshTapped: () -> Unit,
     pantryTapped: () -> Unit,
     settingsTapped: () -> Unit
-) {
+)
+{
     Column(
         Modifier.fillMaxSize()
     )
@@ -40,22 +49,38 @@ fun HomeView(
             )
 
             Button(settingsTapped) {
-                Text("S")
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Icon(SettingsGear, contentDescription = "Settings", modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onPrimary)
+                }
             }
         }
-
         // join & invite
-        Row {
+        Row(Modifier.fillMaxWidth().align(Alignment.CenterHorizontally), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = joinTapped) {
-                Text("Join")
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Text("Join")
+                    Icon(add_household,
+                        contentDescription = "Join",
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+
             }
 
             Button(onClick = inviteTapped) {
-                Text("Invite")
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Text("Invite")
+                    Icon(invite_household, contentDescription = "Invite",  modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onPrimary)
+                }
             }
 
             Button(onClick = refreshTapped) {
-                Text("Refresh")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Refresh")
+                    Icon(Refresh, contentDescription = "Refresh", modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onPrimary)
+                }
             }
         }
         Column(Modifier.fillMaxWidth().wrapContentHeight()) {
@@ -90,13 +115,8 @@ fun HomeView(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        ListItem("Banana", 2, "", "food")
-                        ListItem("Milk", 100, "ml", "drink")
-                        ListItem("Banana", 2, "", "misc")
-                        ListItem("Milk", 100, "ml", "drink")
+                        // TODO Implement Filtered View
                     }
-
-                    // Items that have minimum value alerts set
                 }
                 Column(Modifier.wrapContentHeight()) {
                     Text("To Buy", fontSize = TEXT_REG.sp)
@@ -105,13 +125,7 @@ fun HomeView(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        ListItem("Milk", 1, "L", "")
-                        ListItem("Cherry", 200, "G", "")
-                        ListItem("Milk", 1, "L", "")
-                        ListItem("Cherry", 200, "G", "")
                     }
-
-                    // Items that have minimum value alerts set
                 }
             }
         }
